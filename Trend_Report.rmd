@@ -3,7 +3,7 @@ title: "Epi Trends Report"
 subtitle: '`r format(params$date,"%B %d, %Y")`'
 output: 
   powerpoint_presentation:
-    reference_doc: src/template2.pptx
+    reference_doc: src/template.pptx
 params:
   date: !r Sys.Date()
   report: trend
