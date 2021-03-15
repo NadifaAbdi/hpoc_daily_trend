@@ -22,6 +22,7 @@ summary_cases_bullet_1_part_1<-paste0("The 7 day moving average for cases was ",
 
 summary_cases_direction=ifelse(str_detect(key_national_weekly_change_cases, "\\+")==TRUE, "increase",
                               ifelse(str_detect(key_national_weekly_change_cases,"\\-")==TRUE, "decrease", "no change"))
+
 if (summary_cases_direction=="no change"){
   summary_cases_bullet_1_part_2<-" no change from the week prior"
 } else{
@@ -32,6 +33,7 @@ summary_cases_bullet_1<-c(paste0(summary_cases_bullet_1_part_1, summary_cases_bu
 
 
 summary_cases_bullet_1_sub_1<-paste0(key_sum_PTs_no_increase_cases,"/13 PTs reported a decrease or no change in weekly cases")
+
 if(key_sum_PTs_no_increase_cases<13){
   summary_cases_bullet_1_sub_2<-paste0("Increases were reported by: ",key_PTs_increase_cases)
 } else {

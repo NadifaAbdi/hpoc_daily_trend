@@ -3,7 +3,7 @@ title: "Epi Trends Report"
 subtitle: '`r format(params$date,"%B %d, %Y")`'
 output: 
   powerpoint_presentation:
-    reference_doc: src/template.pptx
+    reference_doc: src/template2.pptx
 params:
   date: !r Sys.Date()
   report: trend
@@ -15,7 +15,8 @@ knitr::opts_chunk$set(echo = FALSE)
 library(reticulate)
 library(knitr)
 library(readr)
-library(tidyverse)
+library(tidyr)
+library(dplyr)
 library(patchwork)
 library(scales)
 library(zoo)
@@ -33,19 +34,18 @@ library(flextable)
 library(officer)
 library(hms)
 library(googlesheets4)
-library(metabaser) #need to run: install_github("PHACDataHub/metabaser") to install this package for the first time (https://github.com/PHACDataHub/metabaser for more info)
-library(PHACTrendR) #need to run: install_github("Michael-Elten/PHACTrendR") to install this package for the first time
+library(metabaser) #need to run: devtools::install_github("PHACDataHub/metabaser") to install this package for the first time (https://github.com/PHACDataHub/metabaser for more info)
+library(PHACTrendR) #need to run: devtools::install_github("Michael-Elten/PHACTrendR") to install this package for the first time
+# library(rvg)
+# library(officedown)
+# library(cachem)
 
 list_pt<-c("Canada",PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))
 
 two_weeks_ago <- params$date - weeks(2)
 
-#can possibly designate this folder as a param variable
-#output_folder<-"C:\\rmd\\output\\"
-
-#Boolean value that returns TRUE when the report param is "trend" - allows for selective running of trend vs Nemer report
+#Boolean value that returns TRUE when the report param is "trend" - allows for selective running of trend vs Chief Science report
 eval_if_trend<-(params$report=="trend")
-#Note - can also use this to run certain sections of the report only, as was a priority earlier on
 
 day_of_week<-weekdays(Sys.Date())
 
@@ -63,26 +63,25 @@ thursday<-(day_of_week=="Thursday")
 casedeath_table<-format_casedeath_table(input_table=Case_Death_Stats)
 casedeath_table
 ```
-
 <!-- ```{r case rate figure using R, code=xfun::read_utf8('src/case_per_100k.R'), results='asis', message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20} -->
 <!-- ``` -->
 
-```{r case rate figure using rmd, child="src/case_per_100k.Rmd",eval=eval_if_trend, echo=FALSE, message=FALSE, warning=FALSE,reticulate.repl.quiet = TRUE}
+```{r Case rate figure using rmd, child="src/case_per_100k.Rmd",eval=eval_if_trend, echo=FALSE, message=FALSE, warning=FALSE,reticulate.repl.quiet = TRUE}
 ```
 
 # Daily COVID-19 Cases by Date of Report, Canada
 
-```{r Insert Canada case per 100K, echo=FALSE, results = 'asis', message=FALSE, warning=FALSE, out.width='100%'}
+```{r Insert Canada case per 100K figure, echo=FALSE, results = 'asis', message=FALSE, warning=FALSE, out.width='100%'}
 # fig.cap=paste(key_100k_caption) #insert this if want figure caption to text (still working this out so going back to python caption)
 knitr::include_graphics("output/Canada_case_per_100k.jpg")
 ```
 
-```{r CD, code=xfun::read_utf8('src/01_cd_slides.R'), results='asis', message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r Case and death slides per province, code=xfun::read_utf8('src/01_cd_slides.R'), results='asis', message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 # Daily cases by Jurisdiction (7-day moving average)
 
-```{r PT C, code=xfun::read_utf8('src/03_pt_slides.R'), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r Case rates for big 6, code=xfun::read_utf8('src/03_pt_slides.R'), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 ```{r Hospitalization header, echo=FALSE, results='asis', eval=eval_if_trend}
@@ -96,12 +95,12 @@ hospicu_table<-format_hospicu_table(input_table=Hosp_Metrics_Table)
 hospicu_table
 ```
 
-```{r HospICU, code=xfun::read_utf8('src/05b_hosp_graphs.R'), results = "asis", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r Crude HospICU graphs, code=xfun::read_utf8('src/05b_hosp_graphs.R'), results = "asis", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 # COVID-19 patients in hospital daily per 100,000 population
 
-```{r hospitalizations per 100k population figure, code=xfun::read_utf8('src/05c_hosp_per.R'), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r hospitalizations per 100k figure, code=xfun::read_utf8('src/05c_hosp_per.R'), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 ```{r Epi indicators header, echo=FALSE, results='asis', eval=eval_if_trend}
@@ -116,11 +115,11 @@ Indicators derived from the Case Report Forms")
 ```
 
 # COVID-19 cases by age (population-adjusted), Canada
-```{r Canada Age C, code=c(Sys.setenv(age_prname="Canada"), xfun::read_utf8('src/04_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r Canada Age C, code=c(Sys.setenv(age_prname="Canada"), xfun::read_utf8('src/04b_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 # COVID-19 cases by age, select provinces and territories
-```{r PT Age C, code=c(Sys.setenv(age_prname="pts"), xfun::read_utf8('src/04_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+```{r PT Age C, code=c(Sys.setenv(age_prname="pts"), xfun::read_utf8('src/04b_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
 ```{r Laboratory indicators header, echo=FALSE, results='asis', eval=eval_if_trend}
