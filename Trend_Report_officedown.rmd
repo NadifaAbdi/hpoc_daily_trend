@@ -1,7 +1,10 @@
 ---
 title: "Epi Trends Report"
 subtitle: '`r format(params$date,"%B %d, %Y")`'
-output: 
+output:
+  officedown::rpptx_document
+
+ 
   powerpoint_presentation:
     reference_doc: src/template.pptx
 params:

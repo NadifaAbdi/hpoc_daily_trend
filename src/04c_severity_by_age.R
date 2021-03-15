@@ -10,15 +10,16 @@ qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
 #keeping certain variables, and filtering out missing age and missing earliestdate values #help: SK is missing a bunch of dates
 DISCOVER_hosp <- qry_cases_raw  %>%
   select(phacid, pt, earliestdate, age, agegroup10, agegroup20, hosp) %>%
-  filter(!is.na(age)&hosp=="yes") %>%
+  filter(agegroup20 != "unknown" & hosp=="yes") %>% 
   group_by(earliestdate, agegroup20,pt) %>%
   tally() %>%
   mutate(Jurisdiction = "Canada") %>%
   filter(!is.na(earliestdate)) %>%
   mutate(Jurisdiction=PHACTrendR::recode_PT_names_to_big(toupper(pt))) %>%
   dplyr::rename(hosp = n) %>%
-  PHACTrendR::factor_PT_west_to_east(size = "big") #this help put the plot in order from west to east later. size=big is because the PT names are not abbreviated
+  PHACTrendR::factor_PT_west_to_east(size = "big")%>% #this help put the plot in order from west to east later. size=big is because the PT names are not abbreviated 
 
+  
 #get number of hosp in Canada
 DISCOVER_hosp_national <- DISCOVER_hosp%>%
   ungroup() %>%
@@ -43,8 +44,8 @@ Crude_hosp_national <- DISCOVER_hosp_national %>%
 
 # deaths
 DISCOVER_deaths<-qry_cases_raw  %>%
-  select(phacid, pt, earliestdate, age, agegroup10, agegroup20, coviddeath) %>%
-  filter(!is.na(age)&coviddeath=="yes") %>%
+  select(phacid, pt, earliestdate, agegroup10, agegroup20, coviddeath) %>%
+  filter(agegroup20 != "unknown" & coviddeath=="yes") %>% 
   group_by(earliestdate, agegroup20,pt) %>%
   tally() %>%
   filter(!is.na(earliestdate)) %>%
@@ -194,6 +195,7 @@ ggplot(Crude_hosp_national %>% filter(earliestdate >= "2020-06-01"), aes(x = ear
     plot.caption = element_text(hjust = 0)
   )
 
+ggsave("national crude hosp.png", width = 20, height = 10)
 
 ### Plot for national adjusted hosp ###
 ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
@@ -234,6 +236,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = sdma_per, colour = ageg
     plot.caption = element_text(hjust = 0)
   )
 
+ggsave("national adjusted hosp.png", width = 20, height = 10)
 
 ### Plot for PT adjusted hosp ###
 ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
@@ -275,7 +278,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = sdma_per, colour = agegroup
   )
 
 
-
+ggsave("PT adjusted hosp.png", width = 20, height = 10)
 
 ############ ALL DEATH PLOTS ###################################################################################################################
 
@@ -318,8 +321,10 @@ ggplot(Crude_deaths_national %>% filter(earliestdate >= "2020-06-01"), aes(x = e
     plot.caption = element_text(hjust = 0)
   )
 
+ggsave("national crude deaths.png", width = 20, height = 10)
+
 ### Plot for national adjusted deaths ###
-ggplot(Crude_deaths_national %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
@@ -356,6 +361,8 @@ ggplot(Crude_deaths_national %>% filter(earliestdate >= "2020-06-01"), aes(x = e
     text = element_text(size = 20),
     plot.caption = element_text(hjust = 0)
   )
+
+ggsave("national adjusted deaths.png", width = 20, height = 10)
 
 ### Plot for PT adjusted deaths ###
 # Deaths (Adjusted) Plot
@@ -397,7 +404,7 @@ ggplot(qry_deaths_per_big6, aes(x = earliestdate, y = sdma_per, colour = agegrou
     plot.caption = element_text(hjust = 0)
   )
 
-
+ggsave("PT adjusted deaths.png", width = 20, height = 10)
 
 
 
