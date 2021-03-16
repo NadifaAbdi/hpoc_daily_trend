@@ -81,7 +81,10 @@ export_testing2<-Testing %>%
          Week_positive_tests=week_positive_tests,
          Percent_Positive=week_percent_positive,
          Average_daily_tests=avg_tests_per_day)
-write.csv(export_testing2, 'Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Data Analysis\\NML_weekly_testing.csv')
+
+tryCatch(write_csv(export_testing2, "Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Data Analysis\\NML_weekly_testing.csv"),
+         warning=function(x) "error in lab testing export",
+         error=function(x) "error in lab testing export")
 
 #For use in python script - code blocked out for now as not being used in trend report.
 # write.csv(Testing, 'Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Trend analysis\\_Current\\Trend Report\\rmd\\testing.csv')

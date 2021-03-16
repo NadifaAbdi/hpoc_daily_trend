@@ -2,11 +2,10 @@
 title: "Epi Trends Report"
 subtitle: '`r format(params$date,"%B %d, %Y")`'
 output:
-  officedown::rpptx_document
-
- 
-  powerpoint_presentation:
-    reference_doc: src/template.pptx
+  officedown::rpptx_document:
+      master: "PHAC - ASPC English"
+      reference_doc: "src/template.pptx"
+  
 params:
   date: !r Sys.Date()
   report: trend
@@ -110,8 +109,14 @@ hospicu_table<-format_hospicu_table(input_table=Hosp_Metrics_Table)
 hospicu_table
 ```
 
-```{r Crude HospICU graphs, code=xfun::read_utf8('src/05b_hosp_graphs.R'), results = "asis", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
+<!-- # ```{r Crude HospICU graphs, code=xfun::read_utf8('src/05b_hosp_graphs.R'), results = "asis", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20} -->
+<!-- # ``` -->
+
+```{r dml plot, echo=FALSE, message=FALSE, warning=FALSE, eval=eval_if_trend}
+source("src/05b_hosp_graphs.R")
+rvg::dml(hosp_plot)
 ```
+
 
 # COVID-19 patients in hospital daily per 100,000 population
 
