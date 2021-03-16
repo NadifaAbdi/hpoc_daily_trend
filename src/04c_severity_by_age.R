@@ -16,31 +16,42 @@ DISCOVER_hosp <- qry_cases_raw  %>%
   mutate(Jurisdiction = "Canada") %>%
   filter(!is.na(earliestdate)) %>%
   mutate(Jurisdiction=PHACTrendR::recode_PT_names_to_big(toupper(pt))) %>%
+  mutate(Jurisdiction=ifelse(pt=="yt","Yukon",Jurisdiction)) %>% #for now, as Yukon is listed as YT in Discover, which is not an option in "recode_names_to_big"
   dplyr::rename(hosp = n) %>%
   PHACTrendR::factor_PT_west_to_east(size = "big")%>% #this help put the plot in order from west to east later. size=big is because the PT names are not abbreviated 
+  select(-pt)
+  
+dummy_hosp_data<-expand.grid(earliestdate=tidyr::full_seq(DISCOVER_hosp$earliestdate,1),
+                        Jurisdiction=unique(DISCOVER_hosp$Jurisdiction),
+                        agegroup20=unique(DISCOVER_hosp$agegroup20),
+                        hosp=0)
 
+DISCOVER_hosp2<-bind_rows(DISCOVER_hosp, dummy_hosp_data)%>%
+  group_by(earliestdate,Jurisdiction,agegroup20)%>%
+  summarise(hosp=sum(hosp),
+            .groups="drop_last") %>%
+  group_by(Jurisdiction, agegroup20)%>%
+  arrange(earliestdate)%>%
+  mutate(hosp_7ma=rollmean(hosp, 7, na.pad = TRUE, align = "right")) %>%
+  arrange(earliestdate,Jurisdiction, agegroup20) 
+  
   
 #get number of hosp in Canada
-DISCOVER_hosp_national <- DISCOVER_hosp%>%
+DISCOVER_hosp_national <- DISCOVER_hosp2%>%
   ungroup() %>%
   group_by(earliestdate, agegroup20) %>%
-  tally() %>%
+  summarise(hosp=sum(hosp),
+            hosp_7ma=sum(hosp_7ma),
+            .groups="drop_last") %>%
   mutate(Jurisdiction="Canada") %>%
-  dplyr::rename(hosp = n)
-
-# Filter out missing values and calculate crude hosp (national) 
-Crude_hosp_national <- DISCOVER_hosp_national %>%
-  mutate(earliestdate = as.Date(earliestdate)) %>%
-  filter(!is.na(earliestdate)) %>%
   arrange(agegroup20, earliestdate) %>% #sort
   group_by(agegroup20) %>%
-  mutate(sdma = rollmean(hosp, 7, na.pad = TRUE, align = "right")) %>%   #hosp 7MA
   mutate(agegroup20 = as.character(agegroup20)) %>%
-  filter(agegroup20 != "Unknown") %>%
-  filter(agegroup20 != "NaN") %>%
-  filter(agegroup20 != "unknown") %>%
-  filter(agegroup20 != "") %>%
-  ungroup()
+  ungroup() %>%
+  arrange(earliestdate,Jurisdiction,agegroup20)
+
+
+
 
 # deaths
 DISCOVER_deaths<-qry_cases_raw  %>%
@@ -50,47 +61,57 @@ DISCOVER_deaths<-qry_cases_raw  %>%
   tally() %>%
   filter(!is.na(earliestdate)) %>%
   mutate(Jurisdiction=PHACTrendR::recode_PT_names_to_big(toupper(pt))) %>%
-  dplyr::rename(deaths = n)
+  mutate(Jurisdiction=ifelse(pt=="yt","Yukon",Jurisdiction)) %>% #for now, as Yukon is listed as YT in Discover, which is not an option in "recode_names_to_big"
+  dplyr::rename(deaths = n) %>%
+  select(-pt)
+
+
+dummy_death_data<-expand.grid(earliestdate=tidyr::full_seq(DISCOVER_deaths$earliestdate,1),
+                              Jurisdiction=unique(DISCOVER_deaths$Jurisdiction),
+                              agegroup20=unique(DISCOVER_deaths$agegroup20),
+                              deaths=0)
+
+DISCOVER_deaths2<-bind_rows(DISCOVER_deaths, dummy_death_data)%>%
+  group_by(earliestdate,Jurisdiction,agegroup20)%>%
+  summarise(deaths=sum(deaths),
+            .groups="drop_last") %>%
+  group_by(Jurisdiction, agegroup20)%>%
+  arrange(earliestdate)%>%
+  mutate(deaths_7ma=rollmean(deaths, 7, na.pad = TRUE, align = "right")) %>%
+  arrange(earliestdate,Jurisdiction, agegroup20) 
+
+
 
 #get number of deaths in Canada
-DISCOVER_deaths_national<-DISCOVER_deaths%>%
+DISCOVER_deaths_national <- DISCOVER_deaths2%>%
   ungroup() %>%
   group_by(earliestdate, agegroup20) %>%
-  tally() %>%
+  summarise(deaths=sum(deaths),
+            deaths_7ma=sum(deaths_7ma),
+            .groups="drop_last") %>%
   mutate(Jurisdiction="Canada") %>%
-  dplyr::rename(deaths = n)
-
-# Filter out missing values and calculate crude deaths (for PTs)
-Crude_deaths_national <- DISCOVER_deaths_national %>%
-  mutate(earliestdate = as.Date(earliestdate)) %>%
-  filter(!is.na(earliestdate)) %>%
-  arrange(agegroup20, earliestdate) %>%
+  arrange(agegroup20, earliestdate) %>% #sort
   group_by(agegroup20) %>%
-  mutate(sdma = rollmean(deaths, 7, na.pad = TRUE, align = "right")) %>%   #deaths 7MA
   mutate(agegroup20 = as.character(agegroup20)) %>%
-  filter(agegroup20 != "Unknown") %>%
-  filter(agegroup20 != "NaN") %>%
-  filter(agegroup20 != "unknown") %>%
-  filter(agegroup20 != "") %>%
-  ungroup()
-
+  ungroup() %>%
+  arrange(earliestdate,Jurisdiction,agegroup20)
 
 
 ############ NATIONAL ADJUSTED DATA ###################################################################################################################
 
 # Calculate national hosp per 100K 
-Adjusted_national_hosp <- Crude_hosp_national  %>%
+Adjusted_national_hosp <- DISCOVER_hosp_national  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
   mutate(hosp_per = (hosp/Population20)*100000) %>%   #hosp per 100,000
-  mutate(sdma_per = rollmean(hosp_per, 7, na.pad = TRUE, align = "right")) %>%   #hosp per 100,000 (7MA)
+  mutate(hosp_7ma_per = (hosp_7ma/Population20)*100000) %>%   #hosp per 100,000 (7MA)
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
 # Compute national deaths per 100K 
-Adjusted_national_deaths <- Crude_deaths_national  %>%
+Adjusted_national_deaths <- DISCOVER_deaths_national  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
-  mutate(deaths_per = (deaths/Population20)*100000) %>%
-  mutate(sdma_per = rollmean(deaths_per, 7, na.pad = TRUE, align = "right")) %>% 
+  mutate(deaths_per = (deaths/Population20)*100000,
+         deaths_7ma_per = (deaths_7ma/Population20)*100000) %>% 
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
@@ -99,65 +120,40 @@ Adjusted_national_deaths <- Crude_deaths_national  %>%
 ############ADJUSTED PT DATA ###################################################################################################################
 
 #get the 6 major PTs we want for hosp
-DISCOVER_hosp_big6 <- DISCOVER_hosp %>%
+DISCOVER_hosp_big6 <- DISCOVER_hosp2 %>%
   filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6)) #this filter gets the major 6 PTs we want using the PHACTrendR::PTs_big6 function
 
-# Filter out missing values and calculate crude hosp (for PTs)
-hosp_crude_filter_big6 <- DISCOVER_hosp_big6 %>%
-  mutate(earliestdate = as.Date(earliestdate)) %>%
-  filter(!is.na(earliestdate)) %>%
-  arrange(Jurisdiction, agegroup20, earliestdate) %>%
-  group_by(Jurisdiction, agegroup20) %>%
-  mutate(sdma = rollmean(hosp, 7, na.pad = TRUE, align = "right")) %>%
-  mutate(agegroup20 = as.character(agegroup20)) %>%
-  filter(agegroup20 != "Unknown") %>%
-  filter(agegroup20 != "NaN") %>%
-  filter(agegroup20 != "unknown") %>%
-  filter(agegroup20 != "") %>%
-  ungroup()
-
 # Calculate hosp per 100K for PTs
-Adjusted_hosp_big6 <- hosp_crude_filter_big6  %>%
+Adjusted_hosp_big6 <- DISCOVER_hosp_big6  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
-  mutate(hosp_per = (hosp/Population20)*100000) %>%
-  mutate(sdma_per = rollmean(hosp_per, 7, na.pad = TRUE, align = "right")) %>% 
+  mutate(hosp_per = (hosp/Population20)*100000,
+         hosp_7ma_per = (hosp_7ma/Population20)*100000) %>%
   filter(earliestdate >= "2020-06-01") %>%
-  factor_PT_west_to_east(size="big")
+  factor_PT_west_to_east(size="big") %>%
+  ungroup()
 
 
 
 #get the major PTs we want for deaths
-DISCOVER_deaths_big6 <- DISCOVER_deaths %>%
+DISCOVER_deaths_big6 <- DISCOVER_deaths2 %>%
   filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))
 
 # Filter out missing values and calculate crude deaths (for PTs)
-deaths_crude_filter_big6 <- DISCOVER_deaths_big6 %>%
-  mutate(earliestdate = as.Date(earliestdate)) %>%
-  filter(!is.na(earliestdate)) %>%
-  arrange(Jurisdiction, agegroup20, earliestdate) %>%
-  group_by(Jurisdiction, agegroup20) %>%
-  mutate(sdma = rollmean(deaths, 7, na.pad = TRUE, align = "right")) %>%     #deaths 7MA
-  mutate(agegroup20 = as.character(agegroup20)) %>%
-  filter(agegroup20 != "Unknown") %>%
-  filter(agegroup20 != "NaN") %>%
-  filter(agegroup20 != "unknown") %>%
-  filter(agegroup20 != "") %>%
-  ungroup()
-
-# Compute deaths per 100K for PTs
-qry_deaths_per_big6 <- deaths_crude_filter_big6  %>%
+# Calculate deaths per 100K for PTs
+Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
-  mutate(deaths_per = (deaths/Population20)*100000) %>%
-  mutate(sdma_per = rollmean(deaths_per, 7, na.pad = TRUE, align = "right")) %>% 
+  mutate(deaths_per = (deaths/Population20)*100000,
+         deaths_7ma_per = (deaths_7ma/Population20)*100000) %>%
   filter(earliestdate >= "2020-06-01") %>%
-  factor_PT_west_to_east(size="big")
+  factor_PT_west_to_east(size="big") %>%
+  ungroup()
 
 
 
 ############ ALL HOSP PLOTS ###################################################################################################################
 
 ### Plot for national crude hosp ###
-ggplot(Crude_hosp_national %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
   scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
@@ -195,10 +191,10 @@ ggplot(Crude_hosp_national %>% filter(earliestdate >= "2020-06-01"), aes(x = ear
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national crude hosp.png", width = 20, height = 10)
+ggsave("national crude hosp.png", width = 20, height = 10,dpi=300)
 
 ### Plot for national adjusted hosp ###
-ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
+ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
@@ -236,11 +232,11 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = sdma_per, colour = ageg
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national adjusted hosp.png", width = 20, height = 10)
+ggsave("national adjusted hosp.png", width = 20, height = 10,dpi=300)
 
 ### Plot for PT adjusted hosp ###
-ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
-  geom_line(size = 1.5) +
+ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
+  geom_line(size=1) +
   facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
@@ -277,13 +273,12 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = sdma_per, colour = agegroup
     plot.caption = element_text(hjust = 0)
   )
 
-
-ggsave("PT adjusted hosp.png", width = 20, height = 10)
+ggsave("PT adjusted hosp.png", width = 20, height = 10,dpi=300)
 
 ############ ALL DEATH PLOTS ###################################################################################################################
 
 ### Plot for national crude deaths ###
-ggplot(Crude_deaths_national %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
@@ -321,10 +316,10 @@ ggplot(Crude_deaths_national %>% filter(earliestdate >= "2020-06-01"), aes(x = e
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national crude deaths.png", width = 20, height = 10)
+ggsave("output/national crude deaths.png", width = 20, height = 10, dpi=300)
 
 ### Plot for national adjusted deaths ###
-ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
+ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
@@ -362,11 +357,11 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national adjusted deaths.png", width = 20, height = 10)
+ggsave("output/national adjusted deaths.png", width = 20, height = 10, dpi=300)
 
 ### Plot for PT adjusted deaths ###
 # Deaths (Adjusted) Plot
-ggplot(qry_deaths_per_big6, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
+ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported deaths per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
@@ -376,8 +371,8 @@ ggplot(qry_deaths_per_big6, aes(x = earliestdate, y = sdma_per, colour = agegrou
     labels = label_date("%d%b")
   ) +
   geom_rect(aes(
-    xmin = qry_deaths_per_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = qry_deaths_per_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmin = Adjusted_deaths_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_deaths_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
     ymin = -Inf,
     ymax = Inf
   ),
@@ -404,7 +399,7 @@ ggplot(qry_deaths_per_big6, aes(x = earliestdate, y = sdma_per, colour = agegrou
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("PT adjusted deaths.png", width = 20, height = 10)
+ggsave("PT adjusted deaths.png", width = 20, height = 10, dpi=300)
 
 
 
