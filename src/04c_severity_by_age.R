@@ -1,10 +1,5 @@
 #need to first run the libraries in the trend report.rmd file
 
-#import qry_allcases dataset 
-qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
-
-
-
 ############ NATIONAL CRUDE DATA ###################################################################################################################
 
 #keeping certain variables, and filtering out missing age and missing earliestdate values #help: SK is missing a bunch of dates
@@ -138,7 +133,6 @@ Adjusted_hosp_big6 <- DISCOVER_hosp_big6  %>%
 DISCOVER_deaths_big6 <- DISCOVER_deaths2 %>%
   filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))
 
-# Filter out missing values and calculate crude deaths (for PTs)
 # Calculate deaths per 100K for PTs
 Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
@@ -152,19 +146,22 @@ Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
 
 ############ ALL HOSP PLOTS ###################################################################################################################
 
+
+cat('\n')  
+cat("# Cases resulting in hospitalization by age (crude), Canada", "\n") 
+
 ### Plot for national crude hosp ###
 ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  facet_wrap(vars(Jurisdiction), scales = "free_y") +
-  scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+   scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
     labels = label_date("%d%b")
   ) +
   geom_rect(aes(
-    xmin = Crude_hosp_national %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Crude_hosp_national %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmin = Adjusted_national_hosp %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_hosp %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
     ymin = -Inf,
     ymax = Inf
   ),
@@ -191,12 +188,17 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national crude hosp.png", width = 20, height = 10,dpi=300)
+cat('\n') 
+
+# ggsave("output/national crude hosp.png", width = 20, height = 10,dpi=300)
+
+
+cat('\n')  
+cat("# Cases resulting in hospitalization by age (population-adjusted), Canada", "\n") 
 
 ### Plot for national adjusted hosp ###
 ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
@@ -232,7 +234,11 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("national adjusted hosp.png", width = 20, height = 10,dpi=300)
+cat('\n') 
+# ggsave("output/national adjusted hosp.png", width = 20, height = 10,dpi=300)
+
+cat('\n')  
+cat("# Cases resulting in hospitalization by age (population-adjusted), select provinces", "\n") 
 
 ### Plot for PT adjusted hosp ###
 ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
@@ -273,9 +279,13 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("PT adjusted hosp.png", width = 20, height = 10,dpi=300)
+cat('\n') 
+# ggsave("output/PT adjusted hosp.png", width = 20, height = 10,dpi=300)
 
 ############ ALL DEATH PLOTS ###################################################################################################################
+
+cat('\n')  
+cat("# Cases resulting in death by age (crude), Canada", "\n") 
 
 ### Plot for national crude deaths ###
 ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = agegroup20)) +
@@ -288,8 +298,8 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
     labels = label_date("%d%b")
   ) +
   geom_rect(aes(
-    xmin = Crude_deaths_national %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Crude_deaths_national %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmin = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
     ymin = -Inf,
     ymax = Inf
   ),
@@ -316,7 +326,12 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("output/national crude deaths.png", width = 20, height = 10, dpi=300)
+cat('\n') 
+
+# ggsave("output/national crude deaths.png", width = 20, height = 10, dpi=300)
+
+cat('\n')  
+cat("# Cases resulting in death by age (population-adjusted), Canada", "\n") 
 
 ### Plot for national adjusted deaths ###
 ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
@@ -329,8 +344,8 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     labels = label_date("%d%b")
   ) +
   geom_rect(aes(
-    xmin = Crude_deaths_national %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Crude_deaths_national %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmin = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
     ymin = -Inf,
     ymax = Inf
   ),
@@ -357,7 +372,12 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("output/national adjusted deaths.png", width = 20, height = 10, dpi=300)
+cat('\n') 
+
+# ggsave("output/national adjusted deaths.png", width = 20, height = 10, dpi=300)
+
+cat('\n')  
+cat("# Cases resulting in death by age (population-adjusted), select provinces", "\n") 
 
 ### Plot for PT adjusted deaths ###
 # Deaths (Adjusted) Plot
@@ -399,7 +419,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
     plot.caption = element_text(hjust = 0)
   )
 
-ggsave("PT adjusted deaths.png", width = 20, height = 10, dpi=300)
+# ggsave("output/PT adjusted deaths.png", width = 20, height = 10, dpi=300)
 
 
 

@@ -24,7 +24,7 @@ qry_cases_per <- qry_cases_filter %>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
-qry_cases_per$Jurisdiction <- recode(qry_cases_per$Jurisdiction, "Canada"="", "British Columbia"="BC","Alberta"="AB","Saskatchewan"="SK","Manitoba"="MB","Quebec"="QC","Ontario"="ON")
+# qry_cases_per$Jurisdiction <- recode(qry_cases_per$Jurisdiction, "Canada"="", "British Columbia"="BC","Alberta"="AB","Saskatchewan"="SK","Manitoba"="MB","Quebec"="QC","Ontario"="ON")
 
 # Plot
 plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
