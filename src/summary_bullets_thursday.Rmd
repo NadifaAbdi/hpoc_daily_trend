@@ -20,5 +20,5 @@
   + `r summary_severity_bullet_3_sub_2`
   
 ## `r summary_international_header`
-* `r summary_international_bullet_1`
-* `r summary_international_bullet_2`
+  + `r summary_international_bullet_1`
+  + `r summary_international_bullet_2`

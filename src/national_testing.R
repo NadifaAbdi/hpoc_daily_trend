@@ -29,3 +29,44 @@ ggplot(data=National_Daily)+
         legend.text = element_text(size=20))
 
   
+
+## Alternative graph - using facet_wrap to compare lab testing numbers and % positive without plotting on same graph
+# 
+label_tests_performed<-"Daily tests performed"
+label_tests_performed_7MA<-"7 day average of tests performed"
+label_percent_positive<-"7 day average of percent positivity (%)"
+
+National_Daily_long<-National_Daily %>%
+  mutate(percent_positive_rescaled=percent_positive*100) %>%
+  pivot_longer(cols = c(tests_performed:percent_positive_rescaled),
+               names_to ="metric",
+               values_to="value") %>%
+  mutate(metric=ifelse(metric=="tests_performed",label_tests_performed,
+                       ifelse(metric=="percent_positive_rescaled",label_percent_positive,
+                              ifelse(metric=="tests_performed_7MA", label_tests_performed_7MA, metric)))) %>%
+  filter(metric %in% c(label_tests_performed_7MA, label_percent_positive))
+
+ggplot(data=National_Daily_long)+
+  # geom_bar(data=subset(National_Daily_long,metric==label_tests_performed),aes(x=Date,y=value),stat="identity",fill="lightblue")+
+  geom_area(data=subset(National_Daily_long,metric==label_tests_performed_7MA),aes(x=Date,y=value),fill="lightblue")+
+  geom_line(data=subset(National_Daily_long,metric==label_percent_positive),aes(x=Date, y=value),colour="red",size=1.25)+
+  facet_grid(rows=vars(metric),
+             scales = "free_y",
+             switch = "y")+
+  scale_x_date(breaks = ("month"),
+               labels = label_date("%b %Y"),
+               expand = c(0, 0))+
+  scale_colour_manual(name = "",
+                      values =c('lightblue'='lightblue','red'='red'), labels = c('Number of tests','Percent positive'))+
+  scale_y_continuous(name="",labels=scales::label_comma())+
+  theme(panel.background = element_blank(),
+        panel.border = element_rect(colour = "black", fill=NA),
+        panel.grid=element_blank(),
+        plot.caption = element_text(hjust = 0,size=20),
+        legend.position = "bottom",
+        axis.text = element_text(size=20),
+        axis.title = element_text(size=26),
+        legend.text = element_text(size=20),
+        strip.background = element_blank(),
+        strip.text=element_text(size=rel(1.2)),
+        strip.placement = "outside")
