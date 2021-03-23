@@ -5,9 +5,8 @@ df_pt_incidence_filter <- df %>%
     group_by(Jurisdiction) %>%
     mutate(case_pop_thousand = numtoday / Population * 100000) %>%
     mutate(case_pop_thousand_sdma = rollmean(numtoday, 7, na.pad = TRUE, align = "right") / Population * 100000) %>%
-    recode_PT_names_to_small() %>%
-    filter(Jurisdiction %in% (PHACTrendR::PTs_big6)) %>%
-    factor_PT_west_to_east()%>%
+    filter(Jurisdiction %in% (PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))) %>%
+    factor_PT_west_to_east(size="big")%>%
     mutate(label = if_else(date == max(date), as.character(round(case_pop_thousand_sdma, digits = 1)), NA_character_))
 
 # Plot

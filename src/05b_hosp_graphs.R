@@ -14,14 +14,13 @@ pt_hosp_icu_filter <- all_hosp_data %>%
     group_by(Jurisdiction) %>%
     filter(Date <= max_hosp_date_all_PTs) %>% # to prevent dip from AB
     mutate(Jurisdiction=as.character(Jurisdiction)) %>%
-    recode_PT_names_to_small() %>%
-  factor_PT_west_to_east()
+    factor_PT_west_to_east(size="big")
 
 cat('\n')  
 cat("# COVID-19 patients in hospital daily across Canada", "\n") 
 
 # Plot National
-ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="CAN"), aes(Date, cases, colour = type)) +
+ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="Canada"), aes(Date, cases, colour = type)) +
     geom_line(size = 2) +
     facet_wrap(vars(Jurisdiction), scales = "free_y") +
     scale_x_date(
@@ -58,7 +57,12 @@ cat("# COVID-19 patients in hospital daily in selected provinces and territories
 
 
 # Plot by PT
-ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction %in% c("BC","AB","SK","MB","QC","ON")), aes(Date, cases, colour = type)) +
+
+
+pt_hosp_icu_filter_big_6<-pt_hosp_icu_filter %>% 
+  filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))
+
+ggplot(pt_hosp_icu_filter_big_6, aes(Date, cases, colour = type)) +
   geom_line(size = 2) +
   facet_wrap(vars(Jurisdiction), scales = "free") +
   scale_x_date(

@@ -44,11 +44,11 @@ National_Daily_long<-National_Daily %>%
   mutate(metric=ifelse(metric=="tests_performed",label_tests_performed,
                        ifelse(metric=="percent_positive_rescaled",label_percent_positive,
                               ifelse(metric=="tests_performed_7MA", label_tests_performed_7MA, metric)))) %>%
-  filter(metric %in% c(label_tests_performed_7MA, label_percent_positive))
+  filter(metric %in% c(label_tests_performed, label_percent_positive))
 
 ggplot(data=National_Daily_long)+
-  # geom_bar(data=subset(National_Daily_long,metric==label_tests_performed),aes(x=Date,y=value),stat="identity",fill="lightblue")+
-  geom_area(data=subset(National_Daily_long,metric==label_tests_performed_7MA),aes(x=Date,y=value),fill="lightblue")+
+  geom_bar(data=subset(National_Daily_long,metric==label_tests_performed),aes(x=Date,y=value),stat="identity",fill="lightblue")+
+  # geom_area(data=subset(National_Daily_long,metric==label_tests_performed_7MA),aes(x=Date,y=value),fill="lightblue")+
   geom_line(data=subset(National_Daily_long,metric==label_percent_positive),aes(x=Date, y=value),colour="red",size=1.25)+
   facet_grid(rows=vars(metric),
              scales = "free_y",
@@ -70,3 +70,4 @@ ggplot(data=National_Daily_long)+
         strip.background = element_blank(),
         strip.text=element_text(size=rel(1.2)),
         strip.placement = "outside")
+

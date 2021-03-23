@@ -1,5 +1,3 @@
-#need to first run the libraries in the trend report.rmd file
-
 ############ NATIONAL CRUDE DATA ###################################################################################################################
 
 #keeping certain variables, and filtering out missing age and missing earliestdate values #help: SK is missing a bunch of dates
@@ -224,7 +222,6 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
@@ -269,7 +266,6 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
@@ -290,7 +286,6 @@ cat("# Cases resulting in death by age (crude), Canada", "\n")
 ### Plot for national crude deaths ###
 ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  facet_wrap(vars(Jurisdiction), scales = "free_y") +
   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
@@ -316,7 +311,6 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
@@ -336,8 +330,7 @@ cat("# Cases resulting in death by age (population-adjusted), Canada", "\n")
 ### Plot for national adjusted deaths ###
 ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  facet_wrap(vars(Jurisdiction), scales = "free_y") +
-  scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of reported deaths per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -362,7 +355,6 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
