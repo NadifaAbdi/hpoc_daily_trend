@@ -33,6 +33,7 @@ ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="Canada"), aes(Date, cases, c
         labels = comma_format(accuracy = 1)
     ) +
     scale_color_manual(labels = c("Total hospitalizations", "Total ICU"), values = c("darkblue", "red")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
     theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -75,6 +76,7 @@ ggplot(pt_hosp_icu_filter_big_6, aes(Date, cases, colour = type)) +
     labels = comma_format(accuracy = 1)
   ) +
   scale_color_manual(labels = c("Total hospitalizations", "Total ICU"), values = c("darkblue", "red")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),

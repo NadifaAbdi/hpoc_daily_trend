@@ -165,7 +165,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -211,7 +212,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -255,7 +257,8 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -300,7 +303,8 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -344,7 +348,8 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -390,7 +395,8 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -442,7 +448,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 #   ),
 #   alpha = 0.01, fill = "grey", inherit.aes = FALSE
 #   ) +
-#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
 #   #scale_colour_wsj() +
 #   labs(caption = paste0(
 #     "* Shaded area represents approximate lag in reporting
@@ -484,7 +490,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 #   ),
 #   alpha = 0.01, fill = "grey", inherit.aes = FALSE
 #   ) +
-#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","#A04000","#9B59B6")) +
+#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
 #   #scale_colour_wsj() +
 #   labs(caption = paste0(
 #     "* Shaded area represents approximate lag in reporting
