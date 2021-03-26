@@ -155,8 +155,8 @@ National_Daily <- National_Daily_a %>%
   # mutate(tests_performed=rollmean(daily_tests_performed,k=7,fill=NA,align="right")) %>%
   mutate(tests_performed=daily_tests_performed,
          tests_performed_7MA=rollmean(tests_performed,k=7,fill=NA,align="right"),
-         percent_positive=rollmean(percent_positive,k=7,fill=NA,align="right")) %>%
-  select(Date,Jurisdiction,tests_performed,tests_performed_7MA,percent_positive)  %>%
+         percent_positive_7MA=rollmean(percent_positive,k=7,fill=NA,align="right")) %>%
+  select(Date,Jurisdiction,tests_performed,tests_performed_7MA,percent_positive, percent_positive_7MA)  %>%
   filter(Date>"2021-01-23") %>%   # can remove this filter once ready to present historical lab testing data
   filter(Date<=max_lab_test_fig_date)
 
@@ -189,12 +189,11 @@ PTs_missing_lab_days_current_week<-SALT3 %>%
   recode_PT_names_to_small() %>%
   mutate(text_var=paste0(Jurisdiction," (",days_reported," days of reporting)")) %>%
   ungroup() %>%
-  select(text_var) %>%
-  as.character()
+  select(text_var)
 
-any_PTs_missing_current_week_lab_days_flag<-(length(PTs_missing_lab_days_current_week)>0)
+any_PTs_missing_current_week_lab_days_flag<-(nrow(PTs_missing_lab_days_current_week)>0)
 if (any_PTs_missing_current_week_lab_days_flag==TRUE){
-  key_labtesting_table_footnote<-paste0("The following PTs did not report all 7 days in the current week: ",PHACTrendR::turn_char_vec_to_comma_list(PTs_missing_lab_days_current_week))
+  key_labtesting_table_footnote<-paste0("The following PTs did not report all 7 days in the current week: ",PHACTrendR::turn_char_vec_to_comma_list(PTs_missing_lab_days_current_week$text_var))
 }
 
 # For footnote on daily testing figure

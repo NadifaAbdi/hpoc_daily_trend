@@ -37,12 +37,12 @@ ax.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 # twin object for two different y-axis on the sample plot
 ax2=ax.twinx()
 # make a plot with different y-axis using second axis object
-ax2.plot(National_Daily.Date, National_Daily["percent_positive"],color="red",marker="",markersize=12,label="Percent Positive (7MA)")
+ax2.plot(National_Daily.Date, National_Daily["percent_positive_7MA"],color="red",marker="",markersize=12,label="Percent Positive (7MA)")
 ax2.set_ylabel("Percent Positive",color="black",fontsize=36)
 ax2.yaxis.set_major_formatter(mtick.PercentFormatter(1,decimals=0))
 ax2.tick_params(axis='y',labelsize=28)
 #set y axis limits
-max_y2=National_Daily["percent_positive"].max(skipna=True)*1.2
+max_y2=National_Daily["percent_positive_7MA"].max(skipna=True)*1.2
 ax2.set_ylim([0,max_y2]) #ylimit is set manually for now
 
 # set x-axis label

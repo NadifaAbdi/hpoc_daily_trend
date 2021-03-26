@@ -43,18 +43,6 @@ cum_deaths<-Canada_latest_stats %>%
   select(numdeaths) %>%
   as.numeric()
 
-key_national_7MA_cases
-key_national_7MA_deaths
-key_national_7MA_hosp
-key_national_7MA_icu
-
-key_labtesting_table_footnote
-
-key_Can_weekly_tests
-key_Can_avg_tests_per_day
-key_Can_weekly_perc_positive
-
-
 
 #Numbers for CPHO statement - February XX 2021
 #National Indicator  |  Value   |  Cut off Date
