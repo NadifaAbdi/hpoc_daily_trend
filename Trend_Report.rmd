@@ -40,8 +40,6 @@ library(rvg)
 library(officedown)
 # library(cachem)
 
-list_pt<-c("Canada",PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6))
-
 two_weeks_ago <- params$date - weeks(2)
 
 #Boolean value that returns TRUE when the report param is "trend" - allows for selective running of trend vs Chief Science report

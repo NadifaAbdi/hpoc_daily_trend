@@ -241,7 +241,7 @@ cat("# Cases resulting in hospitalization by age (population-adjusted), select p
 
 ### Plot for PT adjusted hosp ###
 ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
-  geom_line(size=1) +
+  geom_line(size=1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
@@ -269,6 +269,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background = element_blank(),
+    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
