@@ -75,15 +75,15 @@ fig.set_size_inches(30, 12, forward=True)
 
 #save to output folder via python
 # main_folder_string=str(Path(Path.cwd()).parents[0])
-# fig.savefig(main_folder_string+'./output/Testing_National.jpg',
-#     format='jpeg',
+# fig.savefig(main_folder_string+'./output/Testing_National.png',
+#     format='png',
 # dpi=300,
 # bbox_inches='tight')
 
 # getting to "output" directory if running in r
 main_folder_string=str(Path(Path.cwd()).parents[0])
-fig.savefig(main_folder_string+'\output\Testing_National.jpg',
-    format='jpeg',
+fig.savefig(main_folder_string+'\output\Testing_National.png',
+    format='png',
 dpi=300,
 bbox_inches='tight')
 

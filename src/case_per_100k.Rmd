@@ -80,23 +80,23 @@ fig.set_size_inches(24, 10.5, forward=True)
 
 # getting to "output" directory if running in python
 # main_folder_string=str(Path(Path.cwd()).parents[0])
-# fig.savefig(main_folder_string+'./output/Canada_case_per_100k.jpg',
-#     format='jpeg',
+# fig.savefig(main_folder_string+'./output/Canada_case_per_100k.png',
+#     format='png',
 # dpi=300,
 # bbox_inches='tight')
 # plt.clf()
 
 # getting to "output" directory if running in r
 main_folder_string=str(Path(Path.cwd()).parents[0])
-fig.savefig(main_folder_string+'\output\Canada_case_per_100k.jpg',
-    format='jpeg',
+fig.savefig(main_folder_string+'\output\Canada_case_per_100k.png',
+    format='png',
 dpi=300,
 bbox_inches='tight')
 plt.clf()
 
 # Saving to main directory
-# fig.savefig('Canada_case_per_100k.jpg',
-#     format='jpeg',
+# fig.savefig('Canada_case_per_100k.png',
+#     format='png',
 # dpi=300,
 # bbox_inches='tight')
 # plt.clf()
