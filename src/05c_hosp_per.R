@@ -15,7 +15,7 @@ ggplot(data=hosp_per, aes(x=Date, y=hosp_per, group=Jurisdiction, colour=Jurisdi
   scale_y_continuous("Daily hospitalizations per 100,000 population", expand = c(0, 0), limits = c(0, NA)) +
   scale_x_date("",date_breaks = ("1 months"),labels = date_format("%b-%d"),expand = c(0,0)) +
   scale_colour_manual(values = c("red","blue","purple","light blue","#FFB300","#4CAF50")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(Jurisdiction='Jurisdiction', caption = paste0("Updated daily (Sun-Thurs). Data as of: ",format(max(hosp_per$Date), "%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
@@ -28,4 +28,4 @@ ggplot(data=hosp_per, aes(x=Date, y=hosp_per, group=Jurisdiction, colour=Jurisdi
     legend.key.size = unit(3,"line"),
     text = element_text(size = 20),
     plot.caption = element_text(hjust = 0)
-  ) + guides(col = guide_legend(nrow = 1))
+  ) 

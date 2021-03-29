@@ -43,14 +43,19 @@ qry_crude_filter <- qry_cases %>%
 
 qry_crude_filter$Jurisdiction <- recode(qry_crude_filter$Jurisdiction, "Canada"="")
 
+qry_crude_filter <- qry_crude_filter %>% 
+  filter(earliestdate >= "2020-06-01")
+
+
 # Plot Crude Cases (Canada)
-ggplot(qry_crude_filter %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
-  scale_y_continuous("Number of reported cases, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of cases, 7 Day moving average", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
+    breaks = "6 weeks",
+    limits=c(min(qry_crude_filter$earliestdate), max(qry_crude_filter$earliestdate)),
     labels = label_date("%d%b")
   ) +
   geom_rect(aes(
@@ -72,6 +77,8 @@ ggplot(qry_crude_filter %>% filter(earliestdate >= "2020-06-01"), aes(x = earlie
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.text = element_text(size=20),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
@@ -79,8 +86,8 @@ ggplot(qry_crude_filter %>% filter(earliestdate >= "2020-06-01"), aes(x = earlie
     legend.key=element_blank(),
     legend.text = element_text(size = 26),
     legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
-    plot.caption = element_text(hjust = 0)
+    text = element_text(size = 26),
+    plot.caption = element_text(hjust = 0,size=20)
   )
 
 

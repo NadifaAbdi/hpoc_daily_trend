@@ -13,23 +13,23 @@ int_deaths <- df_int %>%
   select(date, location, population, new_deaths, new_deaths_smoothed, new_deaths_smoothed_per_million) %>%
   filter(new_deaths_smoothed_per_million != is.na(new_deaths_smoothed_per_million)) %>%
   mutate(label = if_else(date == max(date), as.character(location), NA_character_))
-
-int_vaccinations<-df_int%>%
-  filter(iso_code %in% countries_of_interest) %>%
-  select(date, 
-         location, 
-         population, 
-         total_vaccinations, 
-         total_vaccinations_per_hundred, 
-         people_vaccinated, 
-         people_vaccinated_per_hundred, 
-         people_fully_vaccinated, 
-         people_fully_vaccinated_per_hundred, 
-         new_vaccinations,
-         new_vaccinations_smoothed, 
-         new_vaccinations_smoothed_per_million) %>%
-  mutate(people_vaccinated_percentage=people_vaccinated_per_hundred/100) %>%
-  filter(!is.na(total_vaccinations))
+# 
+# int_vaccinations<-df_int%>%
+#   filter(iso_code %in% countries_of_interest) %>%
+#   select(date, 
+#          location, 
+#          population, 
+#          total_vaccinations, 
+#          total_vaccinations_per_hundred, 
+#          people_vaccinated, 
+#          people_vaccinated_per_hundred, 
+#          people_fully_vaccinated, 
+#          people_fully_vaccinated_per_hundred, 
+#          new_vaccinations,
+#          new_vaccinations_smoothed, 
+#          new_vaccinations_smoothed_per_million) %>%
+#   mutate(people_vaccinated_percentage=people_vaccinated_per_hundred/100) %>%
+#   filter(!is.na(total_vaccinations))
 
 cat('\n')  
 cat("# Daily Cases by Country (7-day moving average, population adjusted)", "\n") 
@@ -49,6 +49,7 @@ ggplot(int_cases, aes(date, new_cases_smoothed_per_million, group = location, co
                      labels = label_date("%b-%Y")
                      ) +
         scale_colour_tableau(palette = "Tableau 10") +
+        guides(colour = guide_legend(override.aes = list(size=3)))+
         theme(
                 panel.grid.major = element_blank(),
                 panel.grid.minor = element_blank(),
@@ -86,6 +87,7 @@ ggplot(int_deaths, aes(date, new_deaths_smoothed_per_million, group = location, 
                labels = label_date("%b-%Y")
   ) +
   scale_colour_tableau(palette = "Tableau 10") +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),

@@ -30,7 +30,7 @@ qry_cases_per <- qry_cases_filter %>%
 plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
     geom_line(size = 1.5) +
     facet_wrap(~Jurisdiction, scales = "free") +
-    scale_y_continuous("Number of reported cases per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+    scale_y_continuous("Number of cases per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
     scale_x_date(
         "Date of illness onset",
         breaks = scales::breaks_width("6 weeks"),
@@ -55,6 +55,8 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
+        axis.text = element_text(size=20),
+        axis.title = element_text(size=26),
         strip.background = element_blank(),
         strip.text = element_text(hjust = 0, size = 26, face = "bold"),
         legend.position = "bottom",
@@ -63,7 +65,7 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
         legend.text = element_text(size = 26),
         legend.key.size = unit(3,"line"),
         text = element_text(size = 20),
-        plot.caption = element_text(hjust = 0)
+        plot.caption = element_text(hjust = 0, size=20)
     )
 if (jurisdiction[1]=="Canada"){
   plot<-plot+theme(strip.text=element_blank())
