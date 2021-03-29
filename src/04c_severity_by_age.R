@@ -3,8 +3,8 @@
 #keeping certain variables, and filtering out missing age and missing earliestdate values #help: SK is missing a bunch of dates
 DISCOVER_hosp <- qry_cases_raw  %>%
   select(phacid, pt, earliestdate, age, agegroup10, agegroup20, hosp) %>%
-  filter(agegroup20 != "unknown" & hosp=="yes") %>% 
-  group_by(earliestdate, agegroup20,pt) %>%
+  filter(agegroup10 != "unknown" & hosp=="yes") %>% 
+  group_by(earliestdate, agegroup10,pt) %>%
   tally() %>%
   mutate(Jurisdiction = "Canada") %>%
   filter(!is.na(earliestdate)) %>%
@@ -16,32 +16,32 @@ DISCOVER_hosp <- qry_cases_raw  %>%
   
 dummy_hosp_data<-expand.grid(earliestdate=tidyr::full_seq(DISCOVER_hosp$earliestdate,1),
                         Jurisdiction=unique(DISCOVER_hosp$Jurisdiction),
-                        agegroup20=unique(DISCOVER_hosp$agegroup20),
+                        agegroup10=unique(DISCOVER_hosp$agegroup10),
                         hosp=0)
 
 DISCOVER_hosp2<-bind_rows(DISCOVER_hosp, dummy_hosp_data)%>%
-  group_by(earliestdate,Jurisdiction,agegroup20)%>%
+  group_by(earliestdate,Jurisdiction,agegroup10)%>%
   summarise(hosp=sum(hosp),
             .groups="drop_last") %>%
-  group_by(Jurisdiction, agegroup20)%>%
+  group_by(Jurisdiction, agegroup10)%>%
   arrange(earliestdate)%>%
   mutate(hosp_7ma=rollmean(hosp, 7, na.pad = TRUE, align = "right")) %>%
-  arrange(earliestdate,Jurisdiction, agegroup20) 
+  arrange(earliestdate,Jurisdiction, agegroup10) 
   
   
 #get number of hosp in Canada
 DISCOVER_hosp_national <- DISCOVER_hosp2%>%
   ungroup() %>%
-  group_by(earliestdate, agegroup20) %>%
+  group_by(earliestdate, agegroup10) %>%
   summarise(hosp=sum(hosp),
             hosp_7ma=sum(hosp_7ma),
             .groups="drop_last") %>%
   mutate(Jurisdiction="Canada") %>%
-  arrange(agegroup20, earliestdate) %>% #sort
-  group_by(agegroup20) %>%
-  mutate(agegroup20 = as.character(agegroup20)) %>%
+  arrange(agegroup10, earliestdate) %>% #sort
+  group_by(agegroup10) %>%
+  mutate(agegroup10 = as.character(agegroup10)) %>%
   ungroup() %>%
-  arrange(earliestdate,Jurisdiction,agegroup20)
+  arrange(earliestdate,Jurisdiction,agegroup10)
 
 
 
@@ -54,7 +54,6 @@ DISCOVER_deaths<-qry_cases_raw  %>%
   tally() %>%
   filter(!is.na(earliestdate)) %>%
   mutate(Jurisdiction=PHACTrendR::recode_PT_names_to_big(toupper(pt))) %>%
-  mutate(Jurisdiction=ifelse(pt=="yt","Yukon",Jurisdiction)) %>% #for now, as Yukon is listed as YT in Discover, which is not an option in "recode_names_to_big"
   dplyr::rename(deaths = n) %>%
   select(-pt)
 
@@ -94,9 +93,9 @@ DISCOVER_deaths_national <- DISCOVER_deaths2%>%
 
 # Calculate national hosp per 100K 
 Adjusted_national_hosp <- DISCOVER_hosp_national  %>%
-  left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
-  mutate(hosp_per = (hosp/Population20)*100000) %>%   #hosp per 100,000
-  mutate(hosp_7ma_per = (hosp_7ma/Population20)*100000) %>%   #hosp per 100,000 (7MA)
+  left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
+  mutate(hosp_per = (hosp/Population10)*100000) %>%   #hosp per 100,000
+  mutate(hosp_7ma_per = (hosp_7ma/Population10)*100000) %>%   #hosp per 100,000 (7MA)
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
@@ -118,9 +117,9 @@ DISCOVER_hosp_big6 <- DISCOVER_hosp2 %>%
 
 # Calculate hosp per 100K for PTs
 Adjusted_hosp_big6 <- DISCOVER_hosp_big6  %>%
-  left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
-  mutate(hosp_per = (hosp/Population20)*100000,
-         hosp_7ma_per = (hosp_7ma/Population20)*100000) %>%
+  left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
+  mutate(hosp_per = (hosp/Population10)*100000,
+         hosp_7ma_per = (hosp_7ma/Population10)*100000) %>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big") %>%
   ungroup()
@@ -149,7 +148,7 @@ cat('\n')
 cat("# Cases resulting in hospitalization by age (crude), Canada", "\n") 
 
 ### Plot for national crude hosp ###
-ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = agegroup20)) +
+ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = agegroup10)) +
   geom_line(size = 1.5) +
    scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
   scale_x_date(
@@ -165,7 +164,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6","")) +
   guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
@@ -196,7 +196,7 @@ cat('\n')
 cat("# Cases resulting in hospitalization by age (population-adjusted), Canada", "\n") 
 
 ### Plot for national adjusted hosp ###
-ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
+ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup10)) +
   geom_line(size = 1.5) +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
@@ -212,7 +212,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
   guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
@@ -240,7 +241,7 @@ cat('\n')
 cat("# Cases resulting in hospitalization by age (population-adjusted), select provinces", "\n") 
 
 ### Plot for PT adjusted hosp ###
-ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup20)) +
+ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup10)) +
   geom_line(size=1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
   scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
@@ -257,7 +258,8 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
   ),
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
-  scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
   guides(colour = guide_legend(override.aes = list(size=3)))+
   #scale_colour_wsj() +
   labs(caption = paste0(
@@ -432,7 +434,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 
 
 # Plot for PT crude hosp
-# ggplot(hosp_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+# ggplot(hosp_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup10)) +
 #   geom_line(size = 1.5) +
 #   facet_wrap(vars(Jurisdiction), scales = "free_y") +
 #   scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
@@ -474,7 +476,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 #comment out for now because only adjusted PT is needed
 
 # Plot for PT crude deaths
-# ggplot(deaths_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup20)) +
+# ggplot(deaths_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup10)) +
 #   geom_line(size = 1.5) +
 #   facet_wrap(vars(Jurisdiction), scales = "free_y") +
 #   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
