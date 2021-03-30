@@ -77,7 +77,6 @@ ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
-    axis.text = element_text(size=20),
     axis.title = element_text(size=26),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
@@ -86,8 +85,6 @@ ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
     legend.key=element_blank(),
     legend.text = element_text(size = 26),
     legend.key.size = unit(3,"line"),
-    text = element_text(size = 26),
-    plot.caption = element_text(hjust = 0,size=20)
+    plot.caption = element_text(hjust = 0,size=20),
+    text = element_text(size = 26)
   )
-
-

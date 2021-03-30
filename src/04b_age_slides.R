@@ -55,7 +55,6 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        axis.text = element_text(size=20),
         axis.title = element_text(size=26),
         strip.background = element_blank(),
         strip.text = element_text(hjust = 0, size = 26, face = "bold"),
@@ -64,10 +63,12 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
         legend.key=element_blank(),
         legend.text = element_text(size = 26),
         legend.key.size = unit(3,"line"),
-        text = element_text(size = 20),
+        text = element_text(size = 26),
         plot.caption = element_text(hjust = 0, size=20)
     )
 if (jurisdiction[1]=="Canada"){
-  plot<-plot+theme(strip.text=element_blank())
+  plot<-plot+
+    theme(strip.text=element_blank(),
+          axis.text = element_text(size=20))
 }
 plot
