@@ -1,6 +1,6 @@
 ############ NATIONAL CRUDE DATA ###################################################################################################################
 
-#keeping certain variables, and filtering out missing age and missing earliestdate values #help: SK is missing a bunch of dates
+#keeping certain variables, and filtering out missing age and missing earliestdate values
 DISCOVER_hosp <- qry_cases_raw  %>%
   select(phacid, pt, earliestdate, age, agegroup10, agegroup20, hosp) %>%
   filter(agegroup10 != "unknown" & hosp=="yes") %>% 
@@ -427,89 +427,3 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 
 
 
-
-
-#Comment out for now because only adjusted PT is needed
-########### HOSP CRUDE PT PLOT ####################################################################################################################
-
-
-# Plot for PT crude hosp
-# ggplot(hosp_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup10)) +
-#   geom_line(size = 1.5) +
-#   facet_wrap(vars(Jurisdiction), scales = "free_y") +
-#   scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
-#   scale_x_date(
-#     "Date of illness onset",
-#     breaks = scales::breaks_width("6 weeks"),
-#     labels = label_date("%d%b")
-#   ) +
-#   geom_rect(aes(
-#     xmin = hosp_crude_filter_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-#     xmax = hosp_crude_filter_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-#     ymin = -Inf,
-#     ymax = Inf
-#   ),
-#   alpha = 0.01, fill = "grey", inherit.aes = FALSE
-#   ) +
-#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-#   #scale_colour_wsj() +
-#   labs(caption = paste0(
-#     "* Shaded area represents approximate lag in reporting
-#     \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
-#   theme(
-#     panel.grid.major = element_blank(),
-#     panel.grid.minor = element_blank(),
-#     panel.background = element_blank(),
-#     axis.line = element_line(colour = "black"),
-#     strip.background = element_blank(),
-#     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
-#     legend.position = "bottom",
-#     legend.title = element_blank(),
-#     legend.key=element_blank(),
-#     legend.text = element_text(size = 26),
-#     legend.key.size = unit(3,"line"),
-#     text = element_text(size = 20),
-#     plot.caption = element_text(hjust = 0)
-#   )
-
-########### DEATHS CRUDE PT PLOT ####################################################################################################################
-#comment out for now because only adjusted PT is needed
-
-# Plot for PT crude deaths
-# ggplot(deaths_crude_filter_big6 %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = sdma, colour = agegroup10)) +
-#   geom_line(size = 1.5) +
-#   facet_wrap(vars(Jurisdiction), scales = "free_y") +
-#   scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
-#   scale_x_date(
-#     "Date of illness onset",
-#     breaks = scales::breaks_width("6 weeks"),
-#     labels = label_date("%d%b")
-#   ) +
-#   geom_rect(aes(
-#     xmin = deaths_crude_filter_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-#     xmax = deaths_crude_filter_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-#     ymin = -Inf,
-#     ymax = Inf
-#   ),
-#   alpha = 0.01, fill = "grey", inherit.aes = FALSE
-#   ) +
-#   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-#   #scale_colour_wsj() +
-#   labs(caption = paste0(
-#     "* Shaded area represents approximate lag in reporting
-#     \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
-#   theme(
-#     panel.grid.major = element_blank(),
-#     panel.grid.minor = element_blank(),
-#     panel.background = element_blank(),
-#     axis.line = element_line(colour = "black"),
-#     strip.background = element_blank(),
-#     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
-#     legend.position = "bottom",
-#     legend.title = element_blank(),
-#     legend.key=element_blank(),
-#     legend.text = element_text(size = 26),
-#     legend.key.size = unit(3,"line"),
-#     text = element_text(size = 20),
-#     plot.caption = element_text(hjust = 0)
-#   )
