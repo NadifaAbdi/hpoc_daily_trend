@@ -171,7 +171,8 @@ plot_monthly<-function(type=""){
               alpha = 0.01, fill = "grey", inherit.aes = FALSE) +
     scale_color_tableau()+
     guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
-    labs(caption = paste0("* Shaded area represents approximate lag in reporting")) +
+    labs(title=paste0("Proportion of all cases that result in ",event_name," on a monthly scale"),
+         caption = paste0("* Shaded area represents approximate lag in reporting")) +
     theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
@@ -231,7 +232,8 @@ plot_weekly<-function(type="", age_cat_filter=FALSE){
               alpha = 0.01, fill = "grey", inherit.aes = FALSE) +
     scale_color_tableau()+
     guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
-    labs(caption = paste0("* Shaded area represents approximate lag in reporting")) +
+    labs(title=paste0("Proportion of all cases that result in ",event_name," on a weekly scale"),
+         caption = paste0("* Shaded area represents approximate lag in reporting")) +
     theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
