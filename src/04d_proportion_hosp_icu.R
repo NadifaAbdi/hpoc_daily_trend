@@ -49,12 +49,12 @@ icu_by_PT<-qry_cases_raw %>%
 
 
 
-create_proportion_dataset<-function(type="", missing_as_no=FALSE){
+create_proportion_dataset<-function(type="", include_missing=TRUE){
   
     data<-qry_cases_raw %>%
       select(phacid, earliestdate, age, agegroup10, agegroup20, as.name(type)) %>%
       filter(agegroup10 != "unknown") %>%
-      filter(if (missing_as_no==FALSE)  !!as.name(type) %in% c("yes","no") else TRUE) %>% # this line looks to see if `missing_as_no` is set to TRUE, if it isn't, we exclude missing values 
+      filter(if (include_missing==FALSE)  !!as.name(type) %in% c("yes","no") else TRUE) %>% # this line looks to see if `include_missing` is set to TRUE, if it isn't, we exclude missing values 
       group_by(earliestdate, agegroup10) %>%
       summarise(yes_outcome=sum(!!as.name(type)=="yes", na.rm=TRUE),
                 no_outcome=sum(!!as.name(type) %in% c("no","unknown") | is.na(!!as.name(type))),
