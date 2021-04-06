@@ -89,6 +89,51 @@ DISCOVER_deaths_national <- DISCOVER_deaths2%>%
   arrange(earliestdate,Jurisdiction,agegroup20)
 
 
+
+# ICU admissions
+DISCOVER_icu <- qry_cases_raw  %>%
+  select(phacid, pt, earliestdate, age, agegroup10, agegroup20, icu) %>%
+  filter(agegroup10 != "unknown" & icu=="yes") %>% 
+  group_by(earliestdate, agegroup10,pt) %>%
+  tally() %>%
+  mutate(Jurisdiction = "Canada") %>%
+  filter(!is.na(earliestdate)) %>%
+  mutate(Jurisdiction=PHACTrendR::recode_PT_names_to_big(toupper(pt))) %>%
+  mutate(Jurisdiction=ifelse(pt=="yt","Yukon",Jurisdiction)) %>% #for now, as Yukon is listed as YT in Discover, which is not an option in "recode_names_to_big"
+  dplyr::rename(icu = n) %>%
+  PHACTrendR::factor_PT_west_to_east(size = "big")%>% #this help put the plot in order from west to east later. size=big is because the PT names are not abbreviated 
+  select(-pt)
+
+dummy_icu_data<-expand.grid(earliestdate=tidyr::full_seq(DISCOVER_icu$earliestdate,1),
+                            Jurisdiction=unique(DISCOVER_icu$Jurisdiction),
+                            agegroup10=unique(DISCOVER_icu$agegroup10),
+                            icu=0)
+
+DISCOVER_icu2<-bind_rows(DISCOVER_icu, dummy_icu_data)%>%
+  group_by(earliestdate,Jurisdiction,agegroup10)%>%
+  summarise(icu=sum(icu),
+            .groups="drop_last") %>%
+  group_by(Jurisdiction, agegroup10)%>%
+  arrange(earliestdate)%>%
+  mutate(icu_7ma=rollmean(icu, 7, na.pad = TRUE, align = "right")) %>%
+  arrange(earliestdate,Jurisdiction, agegroup10) 
+
+
+#get number of icu in Canada
+DISCOVER_icu_national <- DISCOVER_icu2%>%
+  ungroup() %>%
+  group_by(earliestdate, agegroup10) %>%
+  summarise(icu=sum(icu),
+            icu_7ma=sum(icu_7ma),
+            .groups="drop_last") %>%
+  mutate(Jurisdiction="Canada") %>%
+  arrange(agegroup10, earliestdate) %>% #sort
+  group_by(agegroup10) %>%
+  mutate(agegroup10 = as.character(agegroup10)) %>%
+  ungroup() %>%
+  arrange(earliestdate,Jurisdiction,agegroup10)
+
+
 ############ NATIONAL ADJUSTED DATA ###################################################################################################################
 
 # Calculate national hosp per 100K 
@@ -107,7 +152,13 @@ Adjusted_national_deaths <- DISCOVER_deaths_national  %>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
-
+# Calculate national icu per 100K 
+Adjusted_national_icu <- DISCOVER_icu_national  %>%
+  left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
+  mutate(icu_per = (icu/Population10)*100000) %>%   #icu per 100,000
+  mutate(icu_7ma_per = (icu_7ma/Population10)*100000) %>%   #icu per 100,000 (7MA)
+  filter(earliestdate >= "2020-06-01") %>%
+  factor_PT_west_to_east(size="big")
 
 ############ADJUSTED PT DATA ###################################################################################################################
 
@@ -140,6 +191,19 @@ Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
   ungroup()
 
 
+
+#get the 6 major PTs we want for icu
+DISCOVER_icu_big6 <- DISCOVER_icu2 %>%
+  filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6)) #this filter gets the major 6 PTs we want using the PHACTrendR::PTs_big6 function
+
+# Calculate icu per 100K for PTs
+Adjusted_icu_big6 <- DISCOVER_icu_big6  %>%
+  left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
+  mutate(icu_per = (icu/Population10)*100000,
+         icu_7ma_per = (icu_7ma/Population10)*100000) %>%
+  filter(earliestdate >= "2020-06-01") %>%
+  factor_PT_west_to_east(size="big") %>%
+  ungroup()
 
 ############ ALL HOSP PLOTS ###################################################################################################################
 
@@ -425,5 +489,147 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 
 
 
+############ ALL ICU PLOTS ###################################################################################################################
+
+
+cat('\n')  
+cat("# Cases resulting in ICU admissions by age (crude), Canada", "\n") 
+
+### Plot for national crude icu ###
+ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegroup10)) +
+  geom_line(size = 1.5) +
+  scale_y_continuous("Number of reported ICU admissions, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6","")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.background = element_blank(),
+    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 20),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+
+# ggsave("output/national crude icu.png", width = 20, height = 10,dpi=300)
+
+
+cat('\n')  
+cat("# Cases resulting in ICU admissions by age (population-adjusted), Canada", "\n") 
+
+### Plot for national adjusted icu ###
+ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
+  geom_line(size = 1.5) +
+  scale_y_continuous("Number of reported ICU admissions per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.background = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 20),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+# ggsave("output/national adjusted icu.png", width = 20, height = 10,dpi=300)
+
+cat('\n')  
+cat("# Cases resulting in ICU admissions by age (population-adjusted), select provinces", "\n") 
+
+### Plot for PT adjusted icu ###
+ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
+  geom_line(size=1.5) +
+  facet_wrap(~Jurisdiction, scales = "free") +
+  scale_y_continuous("Number of reported ICU admisssions per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3)))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    strip.background = element_blank(),
+    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 20),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+# ggsave("output/PT adjusted icu.png", width = 20, height = 10,dpi=300)
 
 
