@@ -71,6 +71,8 @@ ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
+    \nThe earliest of the following dates were used as the date of illness onset: symptom onset date, specimen collection date,
+    laboratory testing date, date reported to province or territory, or date reported to PHAC.
     \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
