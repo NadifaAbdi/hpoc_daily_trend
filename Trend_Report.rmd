@@ -128,7 +128,7 @@ Indicators derived from the Case Report Forms")
 ```{r Canada Age C, code=c(Sys.setenv(age_prname="Canada"), xfun::read_utf8('src/04b_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 
-# COVID-19 cases by age (population-adjusted), select provinces
+# COVID-19 cases by age (population-adjusted), select PTs
 ```{r PT Age C, code=c(Sys.setenv(age_prname="pts"), xfun::read_utf8('src/04b_age_slides.R')), results = "hide", message=FALSE, warning=FALSE, fig.height = 9, fig.width = 20}
 ```
 

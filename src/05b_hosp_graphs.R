@@ -54,7 +54,7 @@ ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="Canada"), aes(Date, cases, c
 cat('\n') 
 
 cat('\n')  
-cat("# COVID-19 patients in hospital daily in selected provinces and territories", "\n") 
+cat("# COVID-19 patients in hospital daily, select PTs", "\n") 
 
 
 # Plot by PT
