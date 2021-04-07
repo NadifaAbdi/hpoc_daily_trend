@@ -30,7 +30,7 @@ qry_cases_per <- qry_cases_filter %>%
 plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegroup20)) +
     geom_line(size = 1.5) +
     facet_wrap(~Jurisdiction, scales = "free") +
-    scale_y_continuous("Number of cases per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+    scale_y_continuous("Number of cases per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
     scale_x_date(
         "Date of illness onset",
         breaks = scales::breaks_width("6 weeks"),
@@ -72,3 +72,26 @@ if (jurisdiction[1]=="Canada"){
           axis.text = element_text(size=20))
 }
 plot
+
+
+
+### For summary bullets
+
+if (jurisdiction=="Canada"){
+  key_age_case_rates<-qry_cases_per %>%
+    filter(earliestdate==Sys.Date()-14) %>%
+    arrange(desc(sdma_per)) %>%
+    select(agegroup20, sdma_per) %>%
+    mutate(text_var=paste0("those ",agegroup20, " (",number(sdma_per,accuracy=0.1),")"))
+  
+  key_age_case_highest<-key_age_case_rates %>%
+    head(1) %>%
+    select(text_var)
+  
+  key_age_case_others<-key_age_case_rates %>%
+    tail(nrow(key_age_case_rates)-1) %>%
+    select(text_var)
+
+
+}
+

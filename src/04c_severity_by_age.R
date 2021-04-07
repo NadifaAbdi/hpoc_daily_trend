@@ -214,7 +214,7 @@ cat("# Cases resulting in hospitalization by age (crude), Canada", "\n")
 ### Plot for national crude hosp ###
 ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = agegroup10)) +
   geom_line(size = 1.5) +
-   scale_y_continuous("Number of reported hospitalizations, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+   scale_y_continuous("Number of reported hospitalizations \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -230,7 +230,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
   ) +
   scale_color_tableau()+
   # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6","")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -240,6 +240,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.text=element_text(size=20),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
@@ -247,7 +249,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
     legend.key=element_blank(),
     legend.text = element_text(size = 26),
     legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
+    text = element_text(size = 22),
     plot.caption = element_text(hjust = 0)
   )
 
@@ -262,7 +264,7 @@ cat("# Cases resulting in hospitalization by age (population-adjusted), Canada",
 ### Plot for national adjusted hosp ###
 ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup10)) +
   geom_line(size = 1.5) +
-  scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of hospitalizations per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -278,7 +280,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
   ) +
   scale_color_tableau()+
   # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -288,13 +290,15 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.text=element_text(size=20),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.key=element_blank(),
     legend.text = element_text(size = 26),
     legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
+    text = element_text(size = 22),
     plot.caption = element_text(hjust = 0)
   )
 
@@ -302,13 +306,13 @@ cat('\n')
 # ggsave("output/national adjusted hosp.png", width = 20, height = 10,dpi=300)
 
 cat('\n')  
-cat("# Cases resulting in hospitalization by age (population-adjusted), select provinces", "\n") 
+cat("# Cases resulting in hospitalization by age (population-adjusted), select PTs", "\n") 
 
 ### Plot for PT adjusted hosp ###
 ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = agegroup10)) +
   geom_line(size=1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
-  scale_y_continuous("Number of reported hospitalizations per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of hospitalizations per 100,000 \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -324,7 +328,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
   ) +
   scale_color_tableau()+
   # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -334,6 +338,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
@@ -348,6 +353,156 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
 cat('\n') 
 # ggsave("output/PT adjusted hosp.png", width = 20, height = 10,dpi=300)
 
+
+############ ALL ICU PLOTS ###################################################################################################################
+
+
+cat('\n')  
+cat("# Cases resulting in ICU admission by age (crude), Canada", "\n") 
+
+### Plot for national crude icu ###
+ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegroup10)) +
+  geom_line(size = 1.5) +
+  scale_y_continuous("Number of ICU admissions \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6","")) +
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.text=element_text(size=20),
+    axis.title = element_text(size=26),
+    strip.background = element_blank(),
+    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 22),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+
+# ggsave("output/national crude icu.png", width = 20, height = 10,dpi=300)
+
+
+cat('\n')  
+cat("# Cases resulting in ICU admissions by age (population-adjusted), Canada", "\n") 
+
+### Plot for national adjusted icu ###
+ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
+  geom_line(size = 1.5) +
+  scale_y_continuous("Number of  ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title = element_text(size=26),
+    axis.text=element_text(size=20),
+    strip.background = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 22),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+# ggsave("output/national adjusted icu.png", width = 20, height = 10,dpi=300)
+
+cat('\n')  
+cat("# Cases resulting in ICU admissions by age (population-adjusted), select PTs", "\n") 
+
+### Plot for PT adjusted icu ###
+ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
+  geom_line(size=1.5) +
+  facet_wrap(~Jurisdiction, scales = "free") +
+  scale_y_continuous("Number of ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_x_date(
+    "Date of illness onset",
+    breaks = scales::breaks_width("6 weeks"),
+    labels = label_date("%d%b")
+  ) +
+  geom_rect(aes(
+    xmin = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    xmax = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
+    ymin = -Inf,
+    ymax = Inf
+  ),
+  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  ) +
+  scale_color_tableau()+
+  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
+  #scale_colour_wsj() +
+  labs(caption = paste0(
+    "* Shaded area represents approximate lag in reporting
+        \nNote that SK data is not displayed due to non-reporting of ICU variable in case report forms. 
+        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    axis.title = element_text(size=26),
+    strip.background = element_blank(),
+    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.key=element_blank(),
+    legend.text = element_text(size = 26),
+    legend.key.size = unit(3,"line"),
+    text = element_text(size = 20),
+    plot.caption = element_text(hjust = 0)
+  )
+
+cat('\n') 
+# ggsave("output/PT adjusted icu.png", width = 20, height = 10,dpi=300)
+
 ############ ALL DEATH PLOTS ###################################################################################################################
 
 cat('\n')  
@@ -356,7 +511,7 @@ cat("# Cases resulting in death by age (crude), Canada", "\n")
 ### Plot for national crude deaths ###
 ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  scale_y_continuous("Number of reported deaths, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of deaths \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -371,7 +526,7 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -381,6 +536,8 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.title = element_text(size=26),
+    axis.text=element_text(size=20),
     strip.background = element_blank(),
     legend.position = "bottom",
     legend.title = element_blank(),
@@ -401,7 +558,7 @@ cat("# Cases resulting in death by age (population-adjusted), Canada", "\n")
 ### Plot for national adjusted deaths ###
 ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
-  scale_y_continuous("Number of reported deaths per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of deaths per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -416,7 +573,7 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
   alpha = 0.01, fill = "grey", inherit.aes = FALSE
   ) +
   scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
+  guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
@@ -426,6 +583,8 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.text=element_text(size=20),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     legend.position = "bottom",
     legend.title = element_blank(),
@@ -441,14 +600,14 @@ cat('\n')
 # ggsave("output/national adjusted deaths.png", width = 20, height = 10, dpi=300)
 
 cat('\n')  
-cat("# Cases resulting in death by age (population-adjusted), select provinces", "\n") 
+cat("# Cases resulting in death by age (population-adjusted), select PTs", "\n") 
 
 ### Plot for PT adjusted deaths ###
 # Deaths (Adjusted) Plot
 ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
-  scale_y_continuous("Number of reported deaths per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of deaths per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -473,6 +632,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(colour = "black"),
+    axis.title = element_text(size=26),
     strip.background = element_blank(),
     strip.text = element_text(hjust = 0, size = 26, face = "bold"),
     legend.position = "bottom",
@@ -489,147 +649,6 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
 
 
 
-############ ALL ICU PLOTS ###################################################################################################################
 
-
-cat('\n')  
-cat("# Cases resulting in ICU admissions by age (crude), Canada", "\n") 
-
-### Plot for national crude icu ###
-ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegroup10)) +
-  geom_line(size = 1.5) +
-  scale_y_continuous("Number of reported ICU admissions, 7 Day moving average", labels = comma_format(accuracy = 1)) +
-  scale_x_date(
-    "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
-  ) +
-  geom_rect(aes(
-    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    ymin = -Inf,
-    ymax = Inf
-  ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
-  ) +
-  scale_color_tableau()+
-  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6","")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
-  #scale_colour_wsj() +
-  labs(caption = paste0(
-    "* Shaded area represents approximate lag in reporting
-    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(colour = "black"),
-    strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    legend.key=element_blank(),
-    legend.text = element_text(size = 26),
-    legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
-    plot.caption = element_text(hjust = 0)
-  )
-
-cat('\n') 
-
-# ggsave("output/national crude icu.png", width = 20, height = 10,dpi=300)
-
-
-cat('\n')  
-cat("# Cases resulting in ICU admissions by age (population-adjusted), Canada", "\n") 
-
-### Plot for national adjusted icu ###
-ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
-  geom_line(size = 1.5) +
-  scale_y_continuous("Number of reported ICU admissions per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
-  scale_x_date(
-    "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
-  ) +
-  geom_rect(aes(
-    xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    ymin = -Inf,
-    ymax = Inf
-  ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
-  ) +
-  scale_color_tableau()+
-  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
-  #scale_colour_wsj() +
-  labs(caption = paste0(
-    "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(colour = "black"),
-    strip.background = element_blank(),
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    legend.key=element_blank(),
-    legend.text = element_text(size = 26),
-    legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
-    plot.caption = element_text(hjust = 0)
-  )
-
-cat('\n') 
-# ggsave("output/national adjusted icu.png", width = 20, height = 10,dpi=300)
-
-cat('\n')  
-cat("# Cases resulting in ICU admissions by age (population-adjusted), select provinces", "\n") 
-
-### Plot for PT adjusted icu ###
-ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
-  geom_line(size=1.5) +
-  facet_wrap(~Jurisdiction, scales = "free") +
-  scale_y_continuous("Number of reported ICU admisssions per 100,000\n(7 Day moving average)", labels = comma_format(accuracy = 1)) +
-  scale_x_date(
-    "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
-  ) +
-  geom_rect(aes(
-    xmin = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    xmax = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
-    ymin = -Inf,
-    ymax = Inf
-  ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
-  ) +
-  scale_color_tableau()+
-  # scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
-  guides(colour = guide_legend(override.aes = list(size=3)))+
-  #scale_colour_wsj() +
-  labs(caption = paste0(
-    "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(colour = "black"),
-    strip.background = element_blank(),
-    strip.text = element_text(hjust = 0, size = 26, face = "bold"),
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    legend.key=element_blank(),
-    legend.text = element_text(size = 26),
-    legend.key.size = unit(3,"line"),
-    text = element_text(size = 20),
-    plot.caption = element_text(hjust = 0)
-  )
-
-cat('\n') 
-# ggsave("output/PT adjusted icu.png", width = 20, height = 10,dpi=300)
 
 

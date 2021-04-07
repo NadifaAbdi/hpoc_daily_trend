@@ -51,7 +51,7 @@ qry_crude_filter <- qry_crude_filter %>%
 ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
   geom_line(size = 1.5) +
   facet_wrap(vars(Jurisdiction), scales = "free_y") +
-  scale_y_continuous("Number of cases, 7 Day moving average", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of cases \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = "6 weeks",

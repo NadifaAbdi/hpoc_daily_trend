@@ -41,7 +41,8 @@ if(key_sum_PTs_no_increase_cases<13){
 }
 
 #Will need to figure out how to automate a bullet about the cases/death points for now keeping consistent message
-summary_cases_bullet_2<-"Those aged 80+ no longer have the highest incidence rates nationally"
+summary_cases_bullet_2<-paste0("For the week of ",format(Sys.Date()-20,"%b %d")," to ",format(Sys.Date()-14,"%b %d")," the average daily case rate (per 100,000) was highest for ",key_age_case_highest$text_var,", followed by ",
+                               PHACTrendR::turn_char_vec_to_comma_list(key_age_case_others$text_var))
 
 
 #################################################### #
