@@ -25,7 +25,6 @@ qry_cases <- qry_cases_raw %>%
   dplyr::rename(cases = n)
 
 
-
 # Filter province
 qry_crude_filter <- qry_cases %>%
   filter(Jurisdiction %in% jurisdiction) %>%
