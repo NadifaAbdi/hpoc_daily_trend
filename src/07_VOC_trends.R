@@ -15,22 +15,33 @@ sequencing_classification_info<-read_sheet(ss = sheet_URL,sheet = "sequencing") 
   select(free_text_field_upper, sequencing_classification)
 
 
-VOC_qry_cases_raw <-  readRDS("Y:/PHAC/IDPCB/CIRID/VIPS-SAR/EMERGENCY PREPAREDNESS AND RESPONSE HC4/EMERGENCY EVENT/WUHAN UNKNOWN PNEU - 2020/EPI SUMMARY/Trend analysis/_Current/_Source Data/CaseReportForm/trendvoc_extract.rds"  ) %>%
-  dplyr::mutate(onsetdate = as.Date(onsetdate),
-                episodedate = as.Date(episodedate),
-                earliestlabcollectiondate = as.Date(earliestlabcollectiondate),
-                earliestdate = as.Date(earliestdate)) %>%
-  dplyr::rename(age = age_years)
+qry_cases_raw <-  import_DISCOVER_data()
 
 sort(unique(VOC_qry_cases_raw$variantscreenresult))
 sort(unique(VOC_qry_cases_raw$variantsequenceresult))
 
 
 
-VOC_data<-VOC_qry_cases_raw %>%
+VOC_data<-qry_cases_raw %>%
  mutate(variantscreenresult=toupper(variantscreenresult),
         variantsequenceresult=toupper(variantsequenceresult)) %>%
   left_join(screening_classification_info, by=c("variantscreenresult"="free_text_field_upper")) %>%
   left_join(sequencing_classification_info, by=c("variantsequenceresult"="free_text_field_upper")) %>%
   mutate(screening_classification=ifelse(is.na(variantscreenresult),"NOT_COLLECTED",screening_classification),
          sequencing_classification=ifelse(is.na(variantsequenceresult),"NOT_COLLECTED",sequencing_classification))
+
+NML_linelist_data<-read.csv(file.choose())
+
+### EDA
+
+summary(as.factor(VOC_data$screening_classification))
+summary(as.factor(VOC_data$sequencing_classification))
+
+PTs_reporting_DISCOVER<-VOC_data %>%
+  filter(!screening_classification=="NOT_COLLECTED" | !sequencing_classification=="NOT_COLLECTED") %>%
+  group_by(pt) %>%
+  count()
+
+PTs_reporting_NML<-NML_linelist_data%>%
+  group_by(PT)%>%
+  count()
