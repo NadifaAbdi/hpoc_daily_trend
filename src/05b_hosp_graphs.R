@@ -1,3 +1,8 @@
+#if missing dataset, import here (05a is not run in Chief Science report)
+if (!exists('all_hosp_data')){
+  all_hosp_data<-PHACTrendR::import_hosp_data()
+}
+
 # Filter province
 
 max_hosp_date_all_PTs<-all_hosp_data %>%
