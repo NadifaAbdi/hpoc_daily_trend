@@ -7,18 +7,25 @@ scaling_factor<-1800000
 
 National_Daily$percent_positive_rescaled<-National_Daily$percent_positive_7MA*scaling_factor
 ggplot(data=National_Daily)+
-  # geom_area(aes(x=Date, y=tests_performed_7MA,colour="lightblue"), alpha=0.8, fill="lightblue") +
-  geom_bar(aes(x=Date,y=tests_performed, colour="lightblue"),stat="identity",fill="lightblue")+
+  # geom_bar(aes(x=Date,y=tests_performed, colour="lightblue"),stat="identity",fill="lightblue")+
+  geom_area(aes(x=Date, y=tests_performed_7MA,colour="darkblue",fill="lightblue"), size=1.25) +
   geom_line(aes(x=Date, y=percent_positive_rescaled,colour="red"),size=1.25)+
   scale_y_continuous(name = "Number of tests",
                      labels = label_number(big.mark = ","),
                      breaks=seq(0,150000,25000),
                      sec.axis = sec_axis(~./(scaling_factor/100), name = "Percent Positive (%)"))+
-  scale_x_date(breaks = ("month"),
+  scale_x_date(breaks = ("2 months"),
                labels = label_date("%b %Y"),
                expand = c(0, 0))+
   scale_colour_manual(name = "",
-                      values =c('lightblue'='lightblue','red'='red'), labels = c('Number of tests','Percent positive'))+
+                      values=c('darkblue'='darkblue','red'='red'), 
+                      labels = c('Tests performed (7MA)','Percent positive'),
+                      guide = guide_legend(override.aes = list(size = 3,
+                                                               fill="white",
+                                                               shape=c(NA,3))))+
+  scale_fill_manual(name="",
+                    values=c('lightblue'='lightblue'),
+                    guide=FALSE)+
   theme(panel.background = element_blank(),
         panel.border = element_rect(colour = "black", fill=NA),
         panel.grid=element_blank(),
@@ -49,12 +56,12 @@ National_Daily_long<-National_Daily %>%
 ggplot(data=National_Daily_long, aes(x=Date, y=value))+
   geom_bar(data=subset(National_Daily_long,metric=="Tests performed"&time_unit=="daily"),stat="identity",fill="lightblue")+
   geom_line(data=subset(National_Daily_long,metric=="Tests performed"&time_unit=="7MA"),colour="darkblue",size=1.25)+
-  geom_point(data=subset(National_Daily_long,metric=="Percent positivity"&time_unit=="daily"),colour="pink")+
+  geom_point(data=subset(National_Daily_long,metric=="Percent positivity"&time_unit=="daily"),colour="red", alpha=0.5)+
   geom_line(data=subset(National_Daily_long,metric=="Percent positivity"&time_unit=="7MA"),colour="red",size=1.25)+
   facet_grid(rows=vars(metric),
              scales = "free_y",
              switch = "y")+
-  scale_x_date(breaks = ("month"),
+  scale_x_date(breaks = ("2 months"),
                labels = label_date("%b %y"),
                expand = c(0, 0))+
   scale_y_continuous(name="",labels=scales::label_comma())+
@@ -63,10 +70,10 @@ ggplot(data=National_Daily_long, aes(x=Date, y=value))+
         panel.grid=element_blank(),
         plot.caption = element_text(hjust = 0,size=20),
         legend.position = "bottom",
-        axis.text = element_text(size=20),
+        axis.text = element_text(size=18),
         axis.title = element_text(size=26),
         legend.text = element_text(size=20),
         strip.background = element_blank(),
-        strip.text=element_text(size=rel(1.2)),
+        strip.text=element_text(size=rel(1.8)),
         strip.placement = "outside")
 

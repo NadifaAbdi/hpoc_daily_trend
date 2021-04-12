@@ -12,7 +12,6 @@ SALT <- salt_raw %>%
          positive_tests = ifelse (!is.na(positive_tests), positive_tests, round(tests_performed*(percent_positive/100))),  #some PTs (AB, ON) only report % positive
          percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
 
-
 SALT2 <- SALT %>%
   select(-Latest.Update.Date,-update_date)%>%
     mutate(Start_of_week=floor_date(Date, "week"),
@@ -67,13 +66,6 @@ Testing <- rbind(National,Provincial) %>%
   mutate(Week_no = 1:n()) %>%
   slice(tail(row_number(),12)) %>%
   select(Week_no, Week, Jurisdiction, week_tests_performed,week_positive_tests,week_negative_tests,week_percent_positive,avg_tests_per_day, days_reported)
-    
-
-#to replace the export that used to go to Yann Pelchat - awaiting confirmation that it is still needed.
-# export_testing1<-Testing %>%
-#   select(Jurisdiction, Week, week_tests_performed, week_positive_tests)%>%
-#   filter(Jurisdiction=="Canada")
-# write.csv(export_testing1)
 
 export_testing2<-Testing %>%
   select(Jurisdiction, Week, week_tests_performed, week_positive_tests, week_percent_positive, avg_tests_per_day) %>%
@@ -85,9 +77,6 @@ export_testing2<-Testing %>%
 tryCatch(write_csv(export_testing2, "Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Data Analysis\\NML_weekly_testing.csv"),
          warning=function(x) "error in lab testing export",
          error=function(x) "error in lab testing export")
-
-#For use in python script - code blocked out for now as not being used in trend report.
-# write.csv(Testing, 'Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Trend analysis\\_Current\\Trend Report\\rmd\\testing.csv')
 
   Testing_Metrics <- Testing %>%
     group_by(Jurisdiction) %>%
@@ -159,11 +148,6 @@ National_Daily <- National_Daily_a %>%
   select(Date,Jurisdiction,tests_performed,tests_performed_7MA,percent_positive, percent_positive_7MA)  %>%
   filter(Date>"2021-01-23") %>%   # can remove this filter once ready to present historical lab testing data
   filter(Date<=max_lab_test_fig_date)
-
-# No longer running the python code as .py, rather using .rmd file, so writing/reading a csv file no longer needed!
-# write.csv(National_Daily, 'Y:\\PHAC\\IDPCB\\CIRID\\VIPS-SAR\\EMERGENCY PREPAREDNESS AND RESPONSE HC4\\EMERGENCY EVENT\\WUHAN UNKNOWN PNEU - 2020\\EPI SUMMARY\\Trend analysis\\_Current\\Trend Report\\rmd\\testing_daily.csv')
-
-
 
 ##########
 #Creating "key_" R variables for inclusion in the lab slide text, and summary slide of the .Rmd

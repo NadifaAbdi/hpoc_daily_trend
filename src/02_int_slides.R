@@ -122,9 +122,9 @@ cat('\n')
 #   #         nudge_y = 1,
 #   #         na.rm = TRUE
 #   # ) +
-#   scale_y_continuous("Percent vaccinated (any dose)", 
+#   scale_y_continuous("Percent vaccinated (any dose)",
 #                      label=label_percent()) +
-#   scale_x_date("Date", 
+#   scale_x_date("Date",
 #                breaks = scales::breaks_width("1 month"),
 #                labels = label_date("%b-%Y")
 #   ) +
@@ -145,11 +145,11 @@ cat('\n')
 #   labs(caption = paste0("Source: Our World in Data, https://ourworldindata.org/coronavirus
 #                         \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 # 
-# cat('\n') 
+# cat('\n')
 # 
 # 
-# cat('\n')  
-# cat("# International comparison of cases, deaths, and vaccination coverage", "\n") 
+# cat('\n')
+# cat("# International comparison of cases, deaths, and vaccination coverage", "\n")
 # 
 # 
 # ## Facetted plot
@@ -165,14 +165,14 @@ cat('\n')
 #   pivot_longer(cols=c(new_cases_smoothed_per_million, new_deaths_smoothed_per_million, people_vaccinated_per_hundred),
 #                names_to="metric",
 #                values_to="value") %>%
-#   mutate(metric=case_when(metric=="new_cases_smoothed_per_million" ~ "New cases per million (7MA)",
-#                           metric=="new_deaths_smoothed_per_million" ~ "New deaths per million (7MA)",
-#                           metric=="people_vaccinated_per_hundred" ~ "Percent vaccinated (any dose)"))
+#   mutate(metric=case_when(metric=="new_cases_smoothed_per_million" ~ "Cases per million",
+#                           metric=="new_deaths_smoothed_per_million" ~ "Deaths per million",
+#                           metric=="people_vaccinated_per_hundred" ~ "Percent vaccinated"))
 # 
 # 
 # ggplot(int_combined_data, aes(date, value, group = location, colour = location)) +
 #   geom_line(size = 2) +
-#   facet_grid(rows=vars(metric), scales = "free_y")+
+#   facet_grid(rows=vars(metric), scales = "free_y",switch = "y")+
 #   # geom_text_repel(aes(label = label),
 #   #         size = 6,
 #   #         nudge_x = 1,
@@ -180,31 +180,34 @@ cat('\n')
 #   #         na.rm = TRUE
 #   # ) +
 #   scale_y_continuous("", expand = c(0, 0)) +
-#   scale_x_date("Date", 
+#   scale_x_date("Date",
 #                breaks = scales::breaks_width("2 month"),
 #                labels = label_date("%b-%Y")
 #   ) +
 #   scale_colour_tableau(palette = "Tableau 10") +
+#   guides(colour = guide_legend(position="bottom",override.aes = list(size=2), nrow=1))+
 #   theme(
 #     panel.grid.major = element_blank(),
 #     panel.grid.minor = element_blank(),
 #     panel.background = element_blank(),
 #     panel.border = element_rect(colour = "black", fill=NA),
 #     axis.line = element_line(colour = "black"),
-#     legend.position = "right",
+#     legend.position = "bottom",
 #     legend.title = element_blank(),
 #     legend.key=element_blank(),
-#     legend.text = element_text(size = 26),
+#     legend.text = element_text(size = 20),
 #     legend.key.size = unit(3,"line"),
 #     text = element_text(size = 16),
-#     plot.caption = element_text(hjust = 0)
-#   ) +
+#     plot.caption = element_text(hjust = 0),
+#     strip.background = element_blank(),
+#     strip.text=element_text(size=rel(1)),
+#     strip.placement = "outside") +
 #   labs(caption = paste0("Source: Our World in Data, https://ourworldindata.org/coronavirus
 #                         \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 # 
-# cat('\n') 
+# cat('\n')
 # 
-# 
+
 # 
 # 
 
