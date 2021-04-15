@@ -15,7 +15,25 @@ sequencing_classification_info<-read_sheet(ss = sheet_URL,sheet = "sequencing") 
   select(free_text_field_upper, sequencing_classification)
 
 
-qry_cases_raw <-  import_DISCOVER_data()
+
+#~27 seconds
+system.time(
+qry_cases_raw <-  PHACTrendR::import_DISCOVER_data()
+)
+
+#~177 seconds
+system.time(
+  qry_cases<-PHACTrendR::import_DISCOVER_data(method="metabaser",metabase_user="michael.elten@canada.ca",metabase_pass = metabase_pass)
+)
+#~18 seconds
+system.time(
+  VOC_data<-PHACTrendR::import_VOC_data(metabase_user="michael.elten@canada.ca",metabase_pass = metabase_pass)
+)
+#0.2 seconds
+system.time(
+  linked_data<-qry_cases %>%
+    left_join(VOC_data, by="phacid")
+)
 
 sort(unique(VOC_qry_cases_raw$variantscreenresult))
 sort(unique(VOC_qry_cases_raw$variantsequenceresult))

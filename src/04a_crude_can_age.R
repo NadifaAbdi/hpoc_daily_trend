@@ -2,6 +2,22 @@ jurisdiction <- if (Sys.getenv("age_prname") == "Canada") "Canada" else c("Briti
 
 qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
 
+# code for when wanting to switch over to Metabase method
+# note - this requires some setup with the keyring package: 
+# https://www.r-bloggers.com/2019/06/how-to-hide-a-password-in-r-with-the-keyring-package/#:~:text=The%20keyring%20package%20is%20a,plaintext%20in%20an%20R%20script.
+
+# think about how best to include metabase_user automation - probably can take advantage of Sys.getenv("USERNAME") and store a datatable with
+# people's usernames and their metabase usernames to automatically grab metabase_user
+
+# metabase_user<-""
+# metabase_pass<-keyring::key_get("Metabase",metabase_user)
+# 
+# qry_cases_raw<-PHACTrendR::import_DISCOVER_data(method="metabaser",
+#                                                 metabase_user = metabase_user,
+#                                                 metabase_pass = metabase_pass)
+
+
+
 qry_canada <- qry_cases_raw %>%
   janitor::clean_names() %>%
   select(phacid, pt, earliestdate, age, agegroup10, agegroup20) %>%

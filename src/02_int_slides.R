@@ -1,4 +1,4 @@
-df_int<-import_international_data()
+df_int<-PHACTrendR::import_international_data()
 
 countries_of_interest<-c("AUS","CAN","DNK","FRA","DEU","IRL","ISR","ZAF","GBR","USA")
 
