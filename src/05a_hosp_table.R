@@ -76,10 +76,11 @@ Hosp_Metrics_Table <- Hosp_Metrics %>%
   filter(Jurisdiction!="Repatriated travellers") %>%
   mutate(Hospitalizations=ifelse(Jurisdiction=="Canada", can_daily_totals[1],Hospitalizations),
          ICU = ifelse(Jurisdiction=="Canada", can_daily_totals[2], ICU),
-         hosp7ma=ifelse(hosp7ma<1 & hosp7ma>0, round(hosp7ma, digits = 1), round(hosp7ma)),
-         icu7ma=ifelse(icu7ma<1 & icu7ma>0, round(icu7ma, digits = 1), round(icu7ma))) %>%
+         hosp7ma=round(hosp7ma, digits = 1),
+         icu7ma=round(icu7ma, digits = 1)) %>%
   factor_PT_west_to_east(size = "big",Canada_first = TRUE) %>%
-  arrange(Jurisdiction) 
+  arrange(Jurisdiction) %>%
+  ungroup()
 
 #Export hospitalization data
 #only dif is we don't include repatriated travelers here, while they were included in the other export.
