@@ -141,6 +141,7 @@ Adjusted_national_hosp <- DISCOVER_hosp_national  %>%
   left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
   mutate(hosp_per = (hosp/Population10)*100000) %>%   #hosp per 100,000
   mutate(hosp_7ma_per = (hosp_7ma/Population10)*100000) %>%   #hosp per 100,000 (7MA)
+  mutate(agegroup10 = ifelse(agegroup10 == "80 or plus", "80 plus", agegroup10))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
@@ -149,6 +150,7 @@ Adjusted_national_deaths <- DISCOVER_deaths_national  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
   mutate(deaths_per = (deaths/Population20)*100000,
          deaths_7ma_per = (deaths_7ma/Population20)*100000) %>% 
+  mutate(agegroup20 = ifelse(agegroup20 == "80 or plus", "80 plus", agegroup20))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
@@ -157,6 +159,7 @@ Adjusted_national_icu <- DISCOVER_icu_national  %>%
   left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
   mutate(icu_per = (icu/Population10)*100000) %>%   #icu per 100,000
   mutate(icu_7ma_per = (icu_7ma/Population10)*100000) %>%   #icu per 100,000 (7MA)
+  mutate(agegroup10 = ifelse(agegroup10 == "80 or plus", "80 plus", agegroup10))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
@@ -171,6 +174,7 @@ Adjusted_hosp_big6 <- DISCOVER_hosp_big6  %>%
   left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
   mutate(hosp_per = (hosp/Population10)*100000,
          hosp_7ma_per = (hosp_7ma/Population10)*100000) %>%
+  mutate(agegroup10 = ifelse(agegroup10 == "80 or plus", "80 plus", agegroup10))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big") %>%
   ungroup()
@@ -186,6 +190,7 @@ Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
   left_join(PHACTrendR::pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
   mutate(deaths_per = (deaths/Population20)*100000,
          deaths_7ma_per = (deaths_7ma/Population20)*100000) %>%
+  mutate(agegroup20 = ifelse(agegroup20 == "80 or plus", "80 plus", agegroup20))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big") %>%
   ungroup()
@@ -201,6 +206,7 @@ Adjusted_icu_big6 <- DISCOVER_icu_big6  %>%
   left_join(PHACTrendR::pt_pop10, by=c("Jurisdiction"="Jurisdiction", "agegroup10"="AgeGroup10")) %>%
   mutate(icu_per = (icu/Population10)*100000,
          icu_7ma_per = (icu_7ma/Population10)*100000) %>%
+  mutate(agegroup10 = ifelse(agegroup10 == "80 or plus", "80 plus", agegroup10))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big") %>%
   ungroup()

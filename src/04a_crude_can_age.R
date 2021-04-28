@@ -59,7 +59,8 @@ qry_crude_filter <- qry_cases %>%
 qry_crude_filter$Jurisdiction <- recode(qry_crude_filter$Jurisdiction, "Canada"="")
 
 qry_crude_filter <- qry_crude_filter %>% 
-  filter(earliestdate >= "2020-06-01")
+  filter(earliestdate >= "2020-06-01") %>% 
+  mutate(agegroup20 = ifelse(agegroup20 == "80 or plus", "80 plus", agegroup20))
 
 
 # Plot Crude Cases (Canada)

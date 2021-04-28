@@ -21,6 +21,7 @@ qry_cases_per <- qry_cases_filter %>%
   left_join(pt_pop20, by=c("Jurisdiction"="Jurisdiction", "agegroup20"="AgeGroup20")) %>%
   mutate(cases_per = (cases/Population20)*100000) %>%
   mutate(sdma_per = rollmean(cases_per, 7, na.pad = TRUE, align = "right")) %>%
+  mutate(agegroup20 = ifelse(agegroup20 == "80 or plus", "80 plus", agegroup20))%>%
   filter(earliestdate >= "2020-06-01") %>%
   factor_PT_west_to_east(size="big")
 
