@@ -199,7 +199,7 @@ Adjusted_deaths_big6 <- DISCOVER_deaths_big6  %>%
 
 #get the 6 major PTs we want for icu
 DISCOVER_icu_big6 <- DISCOVER_icu2 %>%
-  filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6)) #this filter gets the major 6 PTs we want using the PHACTrendR::PTs_big6 function
+  filter(Jurisdiction %in% PHACTrendR::recode_PT_names_to_big(PHACTrendR::PTs_big6) | Jurisdiction=="Nova Scotia") #this filter gets the major 6 PTs we want using the PHACTrendR::PTs_big6 function
 
 # Calculate icu per 100K for PTs
 Adjusted_icu_big6 <- DISCOVER_icu_big6  %>%

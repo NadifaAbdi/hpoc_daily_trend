@@ -8,13 +8,13 @@ hosp_per <- hosp_per %>%
 hosp_per <- hosp_per  %>%
   mutate(hosp_per=(cases/Population)*100000) %>%
   filter(Date>"2020-03-31") %>%
-  filter(Jurisdiction %in% recode_PT_names_to_big(PHACTrendR::PTs_big6))
+  filter(Jurisdiction %in% recode_PT_names_to_big(PHACTrendR::PTs_big6) | Jurisdiction=="Nova Scotia")
 
 ggplot(data=hosp_per, aes(x=Date, y=hosp_per, group=Jurisdiction, colour=Jurisdiction)) +
   geom_line(size = 1.5) +
   scale_y_continuous("Daily hospitalizations per 100,000 population", expand = c(0, 0), limits = c(0, NA)) +
   scale_x_date("",date_breaks = ("1 months"),labels = date_format("%b-%d"),expand = c(0,0)) +
-  scale_colour_manual(values = c("red","blue","purple","light blue","#FFB300","#4CAF50")) +
+  scale_colour_manual(values = c("red","blue","purple","grey","light blue","#FFB300","#4CAF50")) +
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(Jurisdiction='Jurisdiction', caption = paste0("Updated daily (Sun-Thurs). Data as of: ",format(max(hosp_per$Date), "%B %d"))) +
   theme(
