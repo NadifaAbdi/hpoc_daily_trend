@@ -419,7 +419,7 @@ cat("# Cases resulting in ICU admissions by age (population-adjusted), Canada", 
 ### Plot for national adjusted icu ###
 ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
   geom_line(size = 1.5) +
-  scale_y_continuous("Number of  ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of  ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 0.1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
@@ -467,7 +467,7 @@ cat("# Cases resulting in ICU admissions by age (population-adjusted), select PT
 ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegroup10)) +
   geom_line(size=1.5) +
   facet_wrap(~Jurisdiction, scales = "free") +
-  scale_y_continuous("Number of ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
+  scale_y_continuous("Number of ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 0.1)) +
   scale_x_date(
     "Date of illness onset",
     breaks = scales::breaks_width("6 weeks"),
