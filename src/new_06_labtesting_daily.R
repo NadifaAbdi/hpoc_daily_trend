@@ -1,6 +1,6 @@
 #import SALT data
-#salt_raw <- PHACTrendR::import_SALT_data()
-salt_raw <- read.csv(file="C:/rmd/hpoc_daily_trend/SALT2.csv")
+salt_raw <- PHACTrendR::import_SALT_data()
+# salt_raw <- read.csv(file="C:/rmd/hpoc_daily_trend/SALT2.csv")
 
 #rename variables 
 SALT <- salt_raw %>%
@@ -16,13 +16,8 @@ SALT <- salt_raw %>%
          percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
 
 SALT2 <- SALT %>%
+  filter(Date <= max(update_date)-1) %>% #this gives N-2 data
   select(-Latest.Update.Date,-update_date)%>%
-  #mutate(Start_of_week=floor_date(Date, "week"),
-         #End_of_week=date(Start_of_week)+6,
-         #Week=paste(str_sub(months(Start_of_week),1,3),"-",day(Start_of_week), " to ", str_sub(months(End_of_week),1,3),"-",day(End_of_week)),
-         #Week_before=paste(str_sub(months(date(Start_of_week)-7),1,3),"-",day(date(Start_of_week)-7), " to ", str_sub(months(date(End_of_week)-7),1,3),"-",day(date(End_of_week)-7))) %>%
-  filter(Date <= Sys.Date()-2) %>% #this gives N-2 data
-  #mutate(Current_week=ifelse(date(Date)+7 <= max(Date),"No","Yes")) %>%
   filter(Date>="2021-01-23") %>% #Issues with historical data missing for some PTs - only taking last two weeks data for now.
   arrange(Jurisdiction,datetime)
 
@@ -30,21 +25,28 @@ SALT2 <- SALT %>%
 SALT_PT <- SALT2 %>%
   group_by(Jurisdiction) %>%
   mutate(daily_percent_positive = (positive_tests/tests_performed),
-    tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align=c("right")),
-    percent_positive_7ma = rollmean(daily_percent_positive, k=7, fill=NA, align=c("right")) ) %>%
-  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma)
+    tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align="right"),
+    percent_positive_7ma = rollmean(daily_percent_positive, k=7, fill=NA, align="right") ) %>%
+  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma) %>%
+  ungroup()
 
 # calculate Canadian totals by summing all provinces
 SALT_national <- SALT_PT %>%
   group_by(Date) %>%
   summarise(tests_performed = sum(tests_performed),
-            positive_tests = sum(positive_tests) ) %>%
-            #tests_performed_7ma = sum(tests_performed_7ma))
+            positive_tests = sum(positive_tests)) %>%
   mutate(daily_percent_positive = (positive_tests/tests_performed),
-         tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align=c("right")),
-         percent_positive_7ma = rollmean(daily_percent_positive, k=7, fill=NA, align=c("right")), 
+         tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align="right"),
+         tests_performed_7_sum=rollsum(tests_performed, k=7, fill=NA, align="right"),
+         tests_positive_7_sum=rollsum(positive_tests, k=7, fill=NA, align="right"),
+         percent_positive_7ma = tests_positive_7_sum/tests_performed_7_sum, 
          Jurisdiction = "Canada") %>%
-  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma)
+  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma,percent_positive_7ma)
+
+
+
+#add code to recalculate latest 7dMA total tests and percent positivity for all PTs and nationally 
+# you can make this as a data frame and left-join it to make the SALT complete, or replace values individually
 
 
 # combine PT and National data
