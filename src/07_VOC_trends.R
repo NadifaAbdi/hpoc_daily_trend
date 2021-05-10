@@ -63,10 +63,14 @@ summary(as.factor(VOC_data$screening_classification))
 summary(as.factor(VOC_data$sequencing_classification))
 
 unclassified_screening<-VOC_data %>%
-  filter(is.na(screening_classification))
+  filter(is.na(screening_classification)) %>%
+  select(variantscreenresult) %>%
+  distinct(variantscreenresult)
 
 unclassified_sequencing<-VOC_data %>%
-  filter(is.na(sequencing_classification))
+  filter(is.na(sequencing_classification)) %>%
+  select(variantsequenceresult) %>%
+  distinct(variantsequenceresult)
 
 
 (PTs_reporting_DISCOVER<-VOC_data %>%
@@ -81,7 +85,7 @@ PTs_reporting_NML<-NML_linelist_data%>%
 
 ### Visualization
 
-recognized_VOCs<-c("B.1.1.7","B.1.351","P.1")
+recognized_VOCs<-c("B.1.1.7","B.1.351","P.1","B.1.617")
 
 # stacked epi curve, by VOC
 
@@ -112,5 +116,9 @@ VOC_data %>%
   theme_trend(text_size = 12)+
   scale_fill_trend()
              
+
+## Filter to b.1.617 cases
+B1617_cases<-VOC_data %>%
+  filter(screening_classification=="B.1.617" | sequencing_classification=="B.1.617")
 
 
