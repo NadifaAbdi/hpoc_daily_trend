@@ -19,8 +19,8 @@ ggplot(df_pt_incidence_filter, aes(date, case_pop_thousand_sdma)) +
     ) +
     scale_x_date(
         "Date of case report",
-        #breaks = scales::breaks_width("6 weeks"),
-        labels = label_date("%d%b")
+        #breaks = scales::breaks_width("2 months"),
+        labels = label_date("%b/%y")
     ) +
     theme(
         panel.grid.major = element_blank(),

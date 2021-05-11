@@ -43,8 +43,8 @@ for (i in list_pt){
                         y = Cases_Daily_7MA),size=1.5) +
                 scale_x_date(
                         NULL,
-                        breaks = scales::breaks_width("6 weeks"),
-                        labels = label_date("%d%b"),
+                        breaks = scales::breaks_width("2 months"),
+                        labels = label_date("%b/%y"),
                         expand = c(0, 0),
                         limits=c(as.Date("2020-03-08"),max(df_filter$Date))
                 ) +
@@ -72,8 +72,8 @@ for (i in list_pt){
                         y = Deaths_Daily_7MA),size=1.5) +
                 scale_x_date(
                         NULL,
-                        breaks = scales::breaks_width("6 weeks"),
-                        labels = label_date("%d%b"),
+                        breaks = scales::breaks_width("2 months"),
+                        labels = label_date("%b/%y"),
                         expand = c(0, 0),
                         limits=c(as.Date("2020-03-08"),max(df_filter$Date))
                 ) +

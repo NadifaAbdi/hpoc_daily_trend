@@ -46,7 +46,7 @@ ggplot(int_cases, aes(date, new_cases_smoothed_per_million, group = location, co
         scale_y_continuous("Daily cases per 1,000,000 population", expand = c(0, 0), limits = c(0, NA)) +
         scale_x_date("Date", 
                      breaks = scales::breaks_width("1 month"),
-                     labels = label_date("%b-%y")
+                     labels = label_date("%b/%y")
                      ) +
         scale_colour_tableau(palette = "Tableau 10") +
         guides(colour = guide_legend(override.aes = list(size=3)))+
@@ -84,7 +84,7 @@ ggplot(int_deaths, aes(date, new_deaths_smoothed_per_million, group = location, 
   scale_y_continuous("Daily deaths per 1,000,000 population", expand = c(0, 0), limits = c(0, NA)) +
   scale_x_date("Date", 
                breaks = scales::breaks_width("1 month"),
-               labels = label_date("%b-%y")
+               labels = label_date("%b/%y")
   ) +
   scale_colour_tableau(palette = "Tableau 10") +
   guides(colour = guide_legend(override.aes = list(size=3)))+

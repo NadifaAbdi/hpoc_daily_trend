@@ -34,8 +34,8 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
     scale_y_continuous("Number of cases per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
     scale_x_date(
         "Date of illness onset",
-        breaks = scales::breaks_width("6 weeks"),
-        labels = label_date("%d%b")
+        breaks = scales::breaks_width("2 months"),
+        labels = label_date("%b/%y")
     ) +
     geom_rect(aes(
         xmin = qry_cases_filter %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),

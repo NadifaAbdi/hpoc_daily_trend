@@ -223,8 +223,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
    scale_y_continuous("Number of reported hospitalizations \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_hosp %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -273,8 +273,8 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
   scale_y_continuous("Number of hospitalizations per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_hosp %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -321,8 +321,8 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
   scale_y_continuous("Number of hospitalizations per 100,000 \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("3 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_hosp_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -372,8 +372,8 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegro
   scale_y_continuous("Number of ICU admissions \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -422,8 +422,8 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = ag
   scale_y_continuous("Number of  ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 0.1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_icu %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -470,8 +470,8 @@ ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegro
   scale_y_continuous("Number of ICU admission per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 0.1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("3 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_icu_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -520,8 +520,8 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
   scale_y_continuous("Number of deaths \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -567,8 +567,8 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
   scale_y_continuous("Number of deaths per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("2 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_national_deaths %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),
@@ -616,8 +616,8 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
   scale_y_continuous("Number of deaths per 100,000\n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = scales::breaks_width("6 weeks"),
-    labels = label_date("%d%b")
+    breaks = scales::breaks_width("3 months"),
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = Adjusted_deaths_big6 %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),

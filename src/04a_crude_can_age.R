@@ -70,9 +70,9 @@ ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
   scale_y_continuous("Number of cases \n(7 day moving average)", labels = comma_format(accuracy = 1)) +
   scale_x_date(
     "Date of illness onset",
-    breaks = "6 weeks",
+    breaks = "2 months",
     limits=c(min(qry_crude_filter$earliestdate), max(qry_crude_filter$earliestdate)),
-    labels = label_date("%d%b")
+    labels = label_date("%b/%y")
   ) +
   geom_rect(aes(
     xmin = qry_crude_filter %>% filter(earliestdate == max(earliestdate) - days(14)) %>% select(earliestdate) %>% distinct() %>% pull() %>% as.Date(),

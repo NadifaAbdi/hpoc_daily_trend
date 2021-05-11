@@ -31,7 +31,7 @@ ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="Canada"), aes(Date, cases, c
     scale_x_date(
         NULL,
         breaks = scales::breaks_width("1 month"),
-        labels = label_date("%b-%y")
+        labels = label_date("%b/%y")
     ) +
     scale_y_continuous(
         "Number of cases",
@@ -74,7 +74,7 @@ ggplot(pt_hosp_icu_filter_big_6, aes(Date, cases, colour = type)) +
   scale_x_date(
     NULL,
     breaks = scales::breaks_width("3 months"),
-    labels = label_date("%b-%y")
+    labels = label_date("%b/%y")
   ) +
   scale_y_continuous(
     "Number of cases",
