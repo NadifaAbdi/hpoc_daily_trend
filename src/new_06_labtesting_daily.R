@@ -16,7 +16,7 @@ SALT <- salt_raw %>%
          percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
 
 SALT2 <- SALT %>%
-  filter(Date <= max(update_date)-1) %>% #this gives N-2 data
+  filter(Date <= max(update_date)-2) %>% #this gives N-2 data
   select(-Latest.Update.Date,-update_date)%>%
   filter(Date>="2021-01-23") %>% #Issues with historical data missing for some PTs - only taking last two weeks data for now.
   arrange(Jurisdiction,datetime)
