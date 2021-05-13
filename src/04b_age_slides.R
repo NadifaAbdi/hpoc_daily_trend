@@ -45,9 +45,8 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
     ),
     alpha = 0.01, fill = "grey", inherit.aes = FALSE
     ) +
-    scale_color_manual(values=c("#3498DB","#E74C3C","#27AE60","gold","#9B59B6")) +
+    PHACTrendR::scale_colour_trend() +
     guides(colour = guide_legend(override.aes = list(size=3)))+
-    #scale_colour_wsj() +
     labs(caption = paste0(
         "* Shaded area represents approximate lag in reporting
         \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
