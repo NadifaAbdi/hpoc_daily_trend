@@ -1,7 +1,8 @@
 #import SALT data
 #salt_raw <- PHACTrendR::import_SALT_data()
-salt_raw <- read.csv(file="C:/rmd/hpoc_daily_trend/SALT2.csv")
 
+salt_raw <- read.csv("Submitted+Reports.csv")
+  
 #rename variables 
 SALT <- salt_raw %>%
   select(Report.Date,Jurisdiction,Tests.Performed,Positive.Test.Results,Percent.Positive.Test.Results, Latest.Update.Date) %>%
@@ -14,6 +15,8 @@ SALT <- salt_raw %>%
          datetime = strptime(paste(Date, Time), "%Y-%m-%d%H:%M:%S"),
          positive_tests = ifelse (!is.na(positive_tests), positive_tests, round(tests_performed*(percent_positive/100))),  #some PTs (AB, ON) only report % positive
          percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
+
+n_minus_two<-max(SALT$update_date)-2 
 
 SALT2 <- SALT %>%
   filter(Date <= max(update_date)-2) %>% #this gives N-2 data
@@ -49,74 +52,127 @@ SALT_national <- SALT_PT %>%
 
 # combine PT and National data
 SALT_complete <- rbind(SALT_PT,SALT_national) %>%
-  ungroup()%>%
-  filter(Date ==max(Date) | (Date==max(Date)-7)) %>%
-  group_by(Jurisdiction) %>%
-  select(Jurisdiction, Date, tests_performed_7ma, percent_positive_7ma) 
+  ungroup()
 
 
-##code to calculate accurate Canada-wide stats (to protect against reporting lag from a PT)
-corrected_Can <- SALT2 %>%
-  filter(Date>=max(Date)-6) %>%
-  group_by(Jurisdiction) %>%
-  summarise(tests_performed_7sum=sum(tests_performed), #calculate 7day sums for each PT
-            positive_tests_7sum=sum(positive_tests),
-            .groups="drop_last") %>%
-  ungroup()%>%
-  summarise(Can_tests_performed_7sum=sum(tests_performed_7sum, na.rm=TRUE), #get 7 day sum for Canada
-            Can_positive_tests_7sum=sum(positive_tests_7sum, na.rm=TRUE)) %>%
-  mutate(Can_tests_performed_7ma = Can_tests_performed_7sum/7,
-        Can_percent_positive_7ma = Can_positive_tests_7sum/Can_tests_performed_7sum) %>%
-  as.numeric()
-
-#replace the data for the max date
-SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==max(SALT_complete$Date),"tests_performed_7ma"] <- corrected_Can[3]
-SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==max(SALT_complete$Date),"percent_positive_7ma"] <- corrected_Can[4]
-
-
-
-##use a function to calculate and replace accurate PT stats (to protect against reporting lag from a PT)
-PT_corrections <- function(Jurisdiction="") {
+#this function is ran 7 times because it uses the For loop below containing the most recent 7 days
+#this function recalculates the national numbers for all 7 days
+correct_national_numbers<-function(input_date){
+  input_date<-as.Date(input_date)
   
-  corrected_pt <- SALT2 %>%
-    filter(Date>=max(Date)-6) %>%
-    filter(Jurisdiction == Jurisdiction) %>%
-    summarise(tests_performed_7sum=sum(tests_performed), #calculate sum for each PT
-              positive_tests_7sum=sum(positive_tests),
-              tests_performed_7ma = mean(tests_performed)) %>% #calculate 7MA for each PT
-    mutate(pt_percent_positive_7ma = positive_tests_7sum/tests_performed_7sum) %>%
-    as.numeric()
+  SALT_corrections<-SALT_complete %>%
+    filter(!Jurisdiction=="Canada") %>%
+    filter(Date<= input_date & Date>= input_date-6) %>% #gives most recent 7 days
+    group_by(Jurisdiction) %>%
+    summarise(weekly_total_tests_performed=sum(tests_performed),
+              weekly_total_tests_positive=sum(positive_tests),
+              weekly_tests_performed_7ma=mean(tests_performed), #if a PT doesn't report on the 6th and 7th day, it would contribute a 5 day MA in the national 7MA 
+              .groups="drop_last") %>%
+    summarise(weekly_total_tests_performed=sum(weekly_total_tests_performed),
+              weekly_total_tests_positive=sum(weekly_total_tests_positive),
+              weekly_tests_performed_7ma=sum(weekly_tests_performed_7ma),
+              weekly_percent_positive=weekly_total_tests_positive/weekly_total_tests_performed) %>%
+    mutate(Jurisdiction="Canada",
+           Date=input_date) %>%
+    select(Date, Jurisdiction, weekly_tests_performed_7ma, weekly_percent_positive)
   
-  #replace the data for the max date
-  SALT_complete[SALT_complete$Jurisdiction==Jurisdiction&SALT_complete$Date==max(SALT_complete$Date),"tests_performed_7ma"] <- corrected_pt[3]
-  SALT_complete[SALT_complete$Jurisdiction==Jurisdiction&SALT_complete$Date==max(SALT_complete$Date),"percent_positive_7ma"] <- corrected_pt[4]
+  corrected_7ma<-SALT_corrections$weekly_tests_performed_7ma
+  corrected_perc_pos<-SALT_corrections$weekly_percent_positive
+  
+  SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==input_date, "tests_performed_7ma"]<-corrected_7ma
+  SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==input_date,"percent_positive_7ma"] <- corrected_perc_pos
+  return(SALT_complete)
 }
 
-PT_corrections(Jurisdiction = "Alberta")
-PT_corrections(Jurisdiction = "British Columbia")
-PT_corrections(Jurisdiction = "Ontario")
-PT_corrections(Jurisdiction = "Manitoba")
-PT_corrections(Jurisdiction = "Quebec")
-PT_corrections(Jurisdiction = "New Brunswick")
-PT_corrections(Jurisdiction = "Prince Edward Island")
-PT_corrections(Jurisdiction = "New foundland and Labrador")
-PT_corrections(Jurisdiction = "Nova Scotia")
-PT_corrections(Jurisdiction = "Saskatchewan")
-PT_corrections(Jurisdiction = "Nunavut")
-PT_corrections(Jurisdiction = "Northwest Territories")
-PT_corrections(Jurisdiction = "Yukon")
+n_minus_eight<-n_minus_two-6
 
 
-#reformat the table
-table <- SALT_complete %>%
-  mutate(percent_positive_7ma = ifelse(round(percent_positive_7ma,digits=4) < 0.001, percent(percent_positive_7ma,accuracy = 0.01), percent(percent_positive_7ma,accuracy = 0.1)),
-         tests_performed_7ma = number(tests_performed_7ma,big.mark = "," ,accuracy = 1)) %>%
+correction_dates<-seq.Date(from=n_minus_eight,to = n_minus_two,by = 1) #gives the most recent 7 days in N-2 way of reporting
+
+for (i in correction_dates){ 
+  SALT_complete<-correct_national_numbers(input_date=i)
+}
+
+
+
+
+
+# want to replace and add a new row of data for each PT (for example, if a PT doesn't report today, data for that PT would be missing)
+missing_date<-n_minus_two
+
+  PT_corrections<-SALT_complete %>%
+    filter(!Jurisdiction=="Canada") %>% 
+    filter(Date<= missing_date & Date>= missing_date-6) %>% #gives most recent 7 days #for ex. may 4-10, then 3-19, then 2-8 , etc
+    group_by(Jurisdiction) %>%
+    summarise(weekly_total_tests_performed=sum(tests_performed),
+              weekly_total_tests_positive=sum(positive_tests),
+             tests_performed_7ma2=mean(tests_performed), #if a PT doesn't report on the 6th and 7th day, it would contribute a 5 day MA in the national 7MA 
+              .groups="drop_last") %>%
+    mutate(Date = missing_date,
+           percent_positive_7ma2 = weekly_total_tests_positive/weekly_total_tests_performed) %>%
+    select(Jurisdiction, Date, tests_performed_7ma2, percent_positive_7ma2)
   
-  pivot_wider(names_from = Date, values_from=c(tests_performed_7ma,percent_positive_7ma)) %>%
-  factor_PT_west_to_east(size="big",Canada_first = TRUE) %>%
-  arrange(Jurisdiction) 
+# prepare the data set for merging
+SALT_complete2 <- SALT_complete %>%
+    select(Jurisdiction, Date, tests_performed_7ma, percent_positive_7ma)  
+
+# merge the data sets  
+Combine <- SALT_complete2 %>% 
+  full_join(PT_corrections, by=c("Jurisdiction","Date"))
+
+# replace missing values (if any) with the newly calculated data  
+replace <- Combine %>%
+    mutate(tests_performed_7ma_final = ifelse(is.na(tests_performed_7ma), tests_performed_7ma2, tests_performed_7ma),
+           percent_positive_7ma_final = ifelse(is.na(percent_positive_7ma), percent_positive_7ma2, percent_positive_7ma)) %>%
+  select(Jurisdiction, Date, tests_performed_7ma_final, percent_positive_7ma_final) 
+           
+    
+# keep this week's date and last week's date
+table <- replace %>%
+  filter(Date ==max(Date) | (Date==max(Date)-7)) %>%
+  mutate(week_label=ifelse(Date == max(Date), "thisweek","lastweek")) %>%
+  select(Jurisdiction,week_label,tests_performed_7ma_final, percent_positive_7ma_final) %>%
+  pivot_longer(cols = c("tests_performed_7ma_final","percent_positive_7ma_final"),
+               names_to="type",
+               values_to="value") %>%
+  pivot_wider(names_from = c(week_label, type),
+              names_glue= "{type}_{week_label}" ,
+              values_from=value) 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Final dataset: date, jurisdiction, cumulative tests performed, 7dma tests, 7dma tests/100k, 7dma % positivity
+
+SALT_final<-SALT_complete %>%
+  arrange(Date) %>%
+  group_by(Jurisdiction) %>%
+  mutate(cumulative_tests=cumsum(tests_performed)) %>%
+  left_join(PHACTrendR::latest_can_pop, by="Jurisdiction") %>%
+  mutate(tests_performed_7ma_per_100k=round((tests_performed_7ma/Population)*100000,digits = 1),
+         tests_performed_7ma=round(tests_performed_7ma, digits = 1),
+         percent_positive_7ma=ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2))) %>%
+  select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma)%>%
+  rename(`Seven day rolling percent positivity`=percent_positive_7ma,
+         `Cumulative tests`=cumulative_tests,
+         `Total tests performed, 7-day moving average`=tests_performed_7ma,
+         `Total tests performed per 100k population, 7-day moving average`=tests_performed_7ma_per_100k)
+
+
+
+  
   
   
  
