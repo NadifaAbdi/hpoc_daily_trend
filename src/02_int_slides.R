@@ -122,7 +122,7 @@ cat('\n')
 #   #         nudge_y = 1,
 #   #         na.rm = TRUE
 #   # ) +
-#   scale_y_continuous("Percent vaccinated (any dose)",
+#   scale_y_continuous("Percent vaccinated (at least one dose)",
 #                      label=label_percent()) +
 #   scale_x_date("Date",
 #                breaks = scales::breaks_width("1 month"),
