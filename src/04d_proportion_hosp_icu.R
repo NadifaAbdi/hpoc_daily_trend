@@ -108,7 +108,7 @@ if(type=="hosp"){
                   xmax = max(data$earliestdate),
                   ymin = -Inf,
                   ymax = Inf),
-              alpha = 0.01, fill = "grey", inherit.aes = FALSE) +
+              alpha = 0.02, fill = "grey", inherit.aes = FALSE) +
     scale_color_tableau()+
     guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
     labs(caption = paste0("* Shaded area represents approximate lag in reporting")) +
@@ -168,7 +168,7 @@ plot_monthly<-function(type=""){
                   xmax = max(data$earliestdate_month),
                   ymin = -Inf,
                   ymax = Inf),
-              alpha = 0.01, fill = "grey", inherit.aes = FALSE) +
+              alpha = 0.02, fill = "grey", inherit.aes = FALSE) +
     scale_color_tableau()+
     guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
     labs(title=paste0("Proportion of all cases that result in ",event_name," on a monthly scale"),
@@ -229,7 +229,7 @@ plot_weekly<-function(type="", age_cat_filter=FALSE){
                   xmax = max(data$earliestdate_week),
                   ymin = -Inf,
                   ymax = Inf),
-              alpha = 0.01, fill = "grey", inherit.aes = FALSE) +
+              alpha = 0.02, fill = "grey", inherit.aes = FALSE) +
     scale_color_tableau()+
     guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
     labs(title=paste0("Proportion of all cases that result in ",event_name," on a weekly scale"),

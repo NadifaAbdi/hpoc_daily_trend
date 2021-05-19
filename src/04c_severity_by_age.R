@@ -232,7 +232,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma, colour = ageg
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -281,7 +281,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -328,7 +328,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -378,7 +378,7 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegro
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -426,7 +426,7 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = ag
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
  PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -472,7 +472,7 @@ ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegro
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend() +
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -520,7 +520,7 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend() +
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -566,7 +566,7 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend() +
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
@@ -614,7 +614,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend() +
   guides(colour = guide_legend(override.aes = list(size=3)))+
