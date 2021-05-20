@@ -80,7 +80,7 @@ ggplot(qry_crude_filter, aes(x = earliestdate, y = sdma, colour = agegroup20)) +
     ymin = -Inf,
     ymax = Inf
   ),
-  alpha = 0.01, fill = "grey", inherit.aes = FALSE
+  alpha = 0.02, fill = "grey", inherit.aes = FALSE
   ) +
   PHACTrendR::scale_colour_trend() +
   guides(colour = guide_legend(override.aes = list(size=3)))+

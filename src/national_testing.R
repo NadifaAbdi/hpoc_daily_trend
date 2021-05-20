@@ -25,6 +25,7 @@ ggplot(data=National_Daily)+
   scale_fill_manual(name="",
                     values=c('lightblue'='lightblue'),
                     guide=FALSE)+
+  labs(title="Number of Tests Performed and Percent Positivity Across Canada")+
   theme(panel.background = element_blank(),
         panel.border = element_rect(colour = "black", fill=NA),
         panel.grid=element_blank(),
@@ -33,7 +34,8 @@ ggplot(data=National_Daily)+
         legend.text = element_text(size=20),
         legend.background = element_rect(color = NA),
         axis.text = element_text(size=20),
-        axis.title = element_text(size=26)) 
+        axis.title = element_text(size=26),
+        plot.title = element_text(size=26)) 
 
   
 

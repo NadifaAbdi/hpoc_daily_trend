@@ -15,9 +15,9 @@ key_100k_fig_rate<- round(df_Canada_100k$cases_daily_100k_7MA[df_Canada_100k$Dat
 
 #basic plot
 ggplot(data=df_Canada_100k)+
-  geom_bar(aes(x=Date, y=cases_daily_100k,colour="lightblue"),stat="identity", fill="lightblue") +
-  geom_line(aes(x=Date,y=cases_daily_100k_7MA, colour="darkblue"),size=1)+
-  scale_x_date(breaks = ("month"),
+  geom_bar(aes(x=Date, y=cases_daily_100k,colour="lightblue"),stat="identity", fill="lightblue",width = 0.4) +
+  geom_line(aes(x=Date,y=cases_daily_100k_7MA, colour="darkblue"),size=1.1)+
+  scale_x_date(breaks = ("2 months"),
                labels = label_date("%b %Y"),
                expand = c(0, 0),
                limits=c(as.Date("2020-03-08"),max(df_Canada_100k$Date)))+

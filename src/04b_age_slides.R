@@ -43,7 +43,7 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
         ymin = -Inf,
         ymax = Inf
     ),
-    alpha = 0.01, fill = "grey", inherit.aes = FALSE
+    alpha = 0.02, fill = "grey", inherit.aes = FALSE
     ) +
     PHACTrendR::scale_colour_trend() +
     guides(colour = guide_legend(override.aes = list(size=3)))+
