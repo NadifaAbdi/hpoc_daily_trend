@@ -153,7 +153,7 @@ labtesting_table
 ```{r Laboratory table text, echo=FALSE, message=FALSE, warning=FALSE,results='asis', eval=eval_if_trend}
 cat(
 paste0("Highlights:
-Over the past week, the 7 day moving average of ",key_Can_avg_tests_per_day," tests have been performed for COVID-19 across Canada, for a total of ",key_Can_weekly_tests," tests. The weekly percent positivity (7MA) is ",key_Can_weekly_perc_positive))
+Over the past week, a daily moving average of ",key_Can_avg_tests_per_day," tests have been performed for COVID-19 across Canada, for a total of ",key_Can_weekly_tests," tests. The weekly percent positivity (7MA) is ",key_Can_weekly_perc_positive))
 ```
 
 <!-- ```{r lab_testing figure using rmd, child="src/national_testing.rmd",eval=eval_if_trend, echo=FALSE, message=FALSE, warning=FALSE} -->

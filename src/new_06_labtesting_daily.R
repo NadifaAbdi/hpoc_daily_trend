@@ -16,6 +16,16 @@ SALT <- salt_raw %>%
          positive_tests = ifelse (!is.na(positive_tests), positive_tests, round(tests_performed*(percent_positive/100))),  #some PTs (AB, ON) only report % positive
          percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
 
+#Just took a quick look, there's still one obs with negative values
+temp <- SALT %>%
+  filter(tests_performed<0|positive_tests<0)
+
+#Setting incremental values for the negative obs to 0
+SALT <- SALT %>% 
+  mutate(percent_positive = ifelse(tests_performed<0|positive_tests<0, 0, percent_positive),
+         tests_performed = ifelse(tests_performed<0, 0, tests_performed),
+         positive_tests = ifelse(positive_tests<0, 0, positive_tests))
+
 n_minus_two<-max(SALT$update_date)-2 
 
 
@@ -230,20 +240,20 @@ key_Can_weekly_perc_positive<-percent(can_current_lab_testing$percent_positive_7
 key_Can_avg_tests_change<-PHACTrendR::turn_num_to_percent_change((can_current_lab_testing$tests_performed_7ma_this_week-can_last_week_lab_testing$tests_performed_7ma_last_week)/can_last_week_lab_testing$tests_performed_7ma_last_week)
 key_Can_weekly_perc_positive_change<-PHACTrendR::turn_num_to_percent_change((can_current_lab_testing$percent_positive_7ma_this_week-can_last_week_lab_testing$percent_positive_7ma_last_week)/can_last_week_lab_testing$percent_positive_7ma_last_week)
 
-# this step doesn't work if a PT hasn't reported for 7 days or more
+# text explaining which PTs didn't report this week
 PTs_missing_lab_days_current_week<-SALT_complete %>%
   filter(Date <= n_minus_two & Date >= n_minus_eight) %>% #7 days of this week
   group_by(Jurisdiction) %>%
-  mutate(missing = is.na(tests_performed)) %>%
-  filter(missing == FALSE) %>%
-  summarise(days_reported = n()) %>%
-  filter(days_reported != 7) %>%
+  filter(is.na(tests_performed)) %>%
+  summarise(days_not_reported = n()) %>%
   recode_PT_names_to_small() %>%
-  mutate(text_var=paste0(Jurisdiction," (",days_reported," days of reporting)")) %>%
+  mutate(text_var=paste0(Jurisdiction," (missing ",days_not_reported, " days)")) %>%
+  #mutate(text_var=paste0(Jurisdiction," (",days_not_reported," days missing)")) %>%
   ungroup() %>%
   select(text_var)
   
-# this step doesn't work if a PT hasn't reported for 7 days or more
+  
+# prints the above text if one or more PT doesn't report
 any_PTs_missing_current_week_lab_days_flag<-(nrow(PTs_missing_lab_days_current_week)>0)
 if (any_PTs_missing_current_week_lab_days_flag==TRUE){
   key_labtesting_table_footnote<-paste0("The following PTs did not report all 7 days in the current week: ",PHACTrendR::turn_char_vec_to_comma_list(PTs_missing_lab_days_current_week$text_var))
