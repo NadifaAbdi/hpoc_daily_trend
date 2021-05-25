@@ -192,21 +192,27 @@ last_week <- bind_rows(last_week, last_week_canada) %>%
 
 ########################################################################################################################################################  
 
-# combine both weeks together for the final table and calculate percent change            
+# combine both weeks together for the final table and calculate percent change and tests per 100k (7MA)            
 weeks_combined <- this_week %>%
   left_join(last_week, by="Jurisdiction") %>%
   select(-total_tests_performed_this_week, -total_tests_performed_last_week) %>%
+  left_join(PHACTrendR::latest_can_pop, by="Jurisdiction") %>%
   PHACTrendR::factor_PT_west_to_east(size = "big", Canada_first = TRUE) %>%
   arrange(Jurisdiction) %>%
   mutate(change_in_tests=(tests_performed_7ma_this_week-tests_performed_7ma_last_week)/tests_performed_7ma_last_week,
-         change_in_positivity=(percent_positive_7ma_this_week-percent_positive_7ma_last_week)/percent_positive_7ma_last_week) %>%
+         change_in_positivity=(percent_positive_7ma_this_week-percent_positive_7ma_last_week)/percent_positive_7ma_last_week,
+         tests_7ma_per_100k_this_week=round((tests_performed_7ma_this_week/Population)*100000,digits = 1),
+         tests_7ma_per_100k_last_week=round((tests_performed_7ma_last_week/Population)*100000,digits = 1) ) %>%
   mutate(tests_performed_7ma_this_week = round(tests_performed_7ma_this_week,digits = 1),
          tests_performed_7ma_last_week = round(tests_performed_7ma_last_week,digits = 1)) %>%
-  select(Jurisdiction,tests_performed_7ma_this_week,tests_performed_7ma_last_week,change_in_tests,percent_positive_7ma_this_week,percent_positive_7ma_last_week,change_in_positivity) %>%  
-  rename(!!paste0("Tests Performed (7MA) (",label_last_week,")") := tests_performed_7ma_last_week,
-         !!paste0("Percent Positivity (7MA) (",label_last_week,")") := percent_positive_7ma_last_week,
-         !!paste0("Tests Performed (7MA) (",label_this_week,")") := tests_performed_7ma_this_week,
-         !!paste0("Percent Positivity (7MA) (",label_this_week,")") := percent_positive_7ma_this_week)
+  select(Jurisdiction,tests_performed_7ma_this_week,tests_performed_7ma_last_week,change_in_tests,percent_positive_7ma_this_week,percent_positive_7ma_last_week,change_in_positivity, tests_7ma_per_100k_this_week, tests_7ma_per_100k_last_week) %>%  
+  rename(!!paste0("Tests Performed, 7MA (",label_last_week,")") := tests_performed_7ma_last_week,
+         !!paste0("Percent Positivity, 7MA (",label_last_week,")") := percent_positive_7ma_last_week,
+         !!paste0("Tests Performed, 7MA (",label_this_week,")") := tests_performed_7ma_this_week,
+         !!paste0("Percent Positivity, 7MA (",label_this_week,")") := percent_positive_7ma_this_week,
+         !!paste0("Tests Performed per 100k, 7MA (",label_this_week,")") := tests_7ma_per_100k_this_week,
+         !!paste0("Tests Performed per 100k, 7MA (",label_last_week,")") := tests_7ma_per_100k_last_week)
+         
 
 # mutate(percent_positive_7ma_last_week=ifelse(round(percent_positive_7ma_last_week,digits=4) < 0.001, percent(percent_positive_7ma_last_week,accuracy = 0.01), percent(percent_positive_7ma_last_week,accuracy = 0.1)),
 #        percent_positive_7ma_this_week=ifelse(round(percent_positive_7ma_this_week,digits=4) < 0.001, percent(percent_positive_7ma_this_week,accuracy = 0.01), percent(percent_positive_7ma_this_week,accuracy = 0.1)),
