@@ -111,10 +111,12 @@ SALT_final<-SALT_complete %>%
          tests_performed_7ma=round(tests_performed_7ma, digits = 1),
          percent_positive_7ma=ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2))) %>%
   select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma)%>%
-  rename(`Seven day rolling percent positivity`=percent_positive_7ma,
-         `Cumulative tests`=cumulative_tests,
-         `Total tests performed, 7-day moving average`=tests_performed_7ma,
-         `Total tests performed per 100k population, 7-day moving average`=tests_performed_7ma_per_100k)
+  rename(date=Date,
+         prname=Jurisdiction,
+         numtests=cumulative_tests,
+         avgtests_last7=tests_performed_7ma,
+         avgratetests_last7=tests_performed_7ma_per_100k,
+         avgpositivity_last7=percent_positive_7ma)
 
 
 
