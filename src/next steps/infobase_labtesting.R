@@ -34,31 +34,38 @@ SALT2 <- SALT %>%
   select(-Latest.Update.Date,-update_date)%>%
   arrange(Jurisdiction,datetime)
 
+SALT3<-SALT2 %>%
+  mutate(reported="Yes") %>%
+  complete(Date, Jurisdiction, fill = list(reported="No"))
+
+  
+
 # calculate 7MA for PTs 
-SALT_PT <- SALT2 %>%
+SALT_PT <- SALT3 %>%
   group_by(Jurisdiction) %>%
   mutate(daily_percent_positive = (positive_tests/tests_performed),
-         tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align="right"),
-         tests_performed_7_sum=rollsum(tests_performed, k=7, fill=NA, align="right"),
-         tests_positive_7_sum=rollsum(positive_tests, k=7, fill=NA, align="right"),
+         tests_performed_7ma=rollapply(tests_performed,7, mean,na.rm=TRUE,fill=NA,align="right"),
+         tests_performed_7_sum=rollapply(tests_performed, 7, sum, na.rm=TRUE,fill=NA, align="right"),
+         tests_positive_7_sum=rollapply(positive_tests, 7,sum, na.rm=TRUE, fill=NA, align="right"),
          percent_positive_7ma = tests_positive_7_sum/tests_performed_7_sum ) %>%
-  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma) %>%
+  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma,percent_positive_7ma, reported) %>%
   ungroup()
 
 
 # calculate Canadian totals by summing all provinces
 SALT_national <- SALT_PT %>%
   group_by(Date) %>%
-  summarise(tests_performed = sum(tests_performed),
-            positive_tests = sum(positive_tests) ) %>%
+  summarise(tests_performed = sum(tests_performed, na.rm=TRUE),
+            positive_tests = sum(positive_tests, na.rm=TRUE)) %>%
   #tests_performed_7ma = sum(tests_performed_7ma))
   mutate(daily_percent_positive = (positive_tests/tests_performed),
          tests_performed_7ma = rollmean(tests_performed, k=7, fill=NA, align="right"),
          tests_performed_7_sum=rollsum(tests_performed, k=7, fill=NA, align="right"),
          tests_positive_7_sum=rollsum(positive_tests, k=7, fill=NA, align="right"),
          percent_positive_7ma = tests_positive_7_sum/tests_performed_7_sum,
-         Jurisdiction = "Canada") %>%
-  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma)
+         Jurisdiction = "Canada",
+         reported="NA") %>%
+  select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma, reported)
 
 # combine PT and National data
 SALT_complete <- rbind(SALT_PT,SALT_national) %>%
@@ -71,13 +78,13 @@ correct_national_numbers<-function(input_date){
     filter(!Jurisdiction=="Canada") %>%
     filter(Date<= input_date & Date>= input_date-6) %>%
     group_by(Jurisdiction) %>%
-    summarise(weekly_total_tests_performed=sum(tests_performed),
-              weekly_total_tests_positive=sum(positive_tests),
-              weekly_tests_performed_7ma=mean(tests_performed),
+    summarise(weekly_total_tests_performed=sum(tests_performed, na.rm=TRUE),
+              weekly_total_tests_positive=sum(positive_tests, na.rm=TRUE),
+              weekly_tests_performed_7ma=mean(tests_performed, na.rm=TRUE),
               .groups="drop_last") %>%
-    summarise(weekly_total_tests_performed=sum(weekly_total_tests_performed),
-              weekly_total_tests_positive=sum(weekly_total_tests_positive),
-              weekly_tests_performed_7ma=sum(weekly_tests_performed_7ma),
+    summarise(weekly_total_tests_performed=sum(weekly_total_tests_performed, na.rm=TRUE),
+              weekly_total_tests_positive=sum(weekly_total_tests_positive, na.rm=TRUE),
+              weekly_tests_performed_7ma=sum(weekly_tests_performed_7ma, na.rm=TRUE),
               weekly_percent_positive=weekly_total_tests_positive/weekly_total_tests_performed) %>%
     mutate(Jurisdiction="Canada",
            Date=input_date) %>%
@@ -109,7 +116,8 @@ SALT_final<-SALT_complete %>%
   left_join(PHACTrendR::latest_can_pop, by="Jurisdiction") %>%
   mutate(tests_performed_7ma_per_100k=round((tests_performed_7ma/Population)*100000,digits = 1),
          tests_performed_7ma=round(tests_performed_7ma, digits = 1),
-         percent_positive_7ma=ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2))) %>%
+         percent_positive_7ma=ifelse(is.na(tests_performed_7ma), NA, 
+                                     ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2)))) %>%
   select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma)%>%
   rename(date=Date,
          prname=Jurisdiction,
@@ -124,9 +132,9 @@ SALT_final<-SALT_complete %>%
 gs4_auth()
 
 #if wanting code to be run non-interactively, can do the following (this JSON file must be saved locally in the designated folder)
-Username<-Sys.getenv("USERNAME")
-token_name<-"Update infobase international-c0ed98f022ba.json"
-gs4_auth(path = paste0("C:/Users/",Username,"/.R/gargle/",token_name))
+# Username<-Sys.getenv("USERNAME")
+# token_name<-"Update infobase international-c0ed98f022ba.json"
+# gs4_auth(path = paste0("C:/Users/",Username,"/.R/gargle/",token_name))
 
 spreadsheet_URL<-"https://docs.google.com/spreadsheets/d/1QbFC51QJq8H4s5Q4UOjikEcuGczQXtxfXRrEVpFgiX8"
 sheet_name<-"data_sheet"
