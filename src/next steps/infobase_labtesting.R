@@ -118,7 +118,9 @@ SALT_final<-SALT_complete %>%
          tests_performed_7ma=round(tests_performed_7ma, digits = 1),
          percent_positive_7ma=ifelse(is.na(tests_performed_7ma), NA, 
                                      ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2)))) %>%
-  select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma)%>%
+  mutate(update = ifelse(reported == "Yes", 1,
+                         ifelse(reported == "No", 0, NA))) %>%
+  select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma, update)%>%
   rename(date=Date,
          prname=Jurisdiction,
          numtests=cumulative_tests,
