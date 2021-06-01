@@ -5,8 +5,8 @@
 #scaling factor allows us to plot percent positivity next to number of tests. increase if you want percent positive to be higher on the graph
 scaling_factor<-1800000
 
-figure$percent_positive_rescaled<-figure$percent_positive_7ma*scaling_factor
-ggplot(data=figure)+
+National_Daily$percent_positive_rescaled<-National_Daily$percent_positive_7MA*scaling_factor
+ggplot(data=National_Daily)+
   geom_bar(aes(x=Date,y=tests_performed, colour="lightblue"),stat="identity",fill="lightblue", width=0.7)+
   # geom_area(aes(x=Date, y=tests_performed_7MA,colour="darkblue",fill="lightblue"), size=1.25) +
   geom_line(aes(x=Date, y=percent_positive_rescaled,colour="red"),size=1.25)+
@@ -25,6 +25,7 @@ ggplot(data=figure)+
   scale_fill_manual(name="",
                     values=c('lightblue'='lightblue'),
                     guide=FALSE)+
+  labs(title="Number of Tests Performed and Percent Positivity Across Canada")+
   theme(panel.background = element_blank(),
         panel.border = element_rect(colour = "black", fill=NA),
         panel.grid=element_blank(),
@@ -33,25 +34,26 @@ ggplot(data=figure)+
         legend.text = element_text(size=20),
         legend.background = element_rect(color = NA),
         axis.text = element_text(size=20),
-        axis.title = element_text(size=26)) 
+        axis.title = element_text(size=26),
+        plot.title = element_text(size=26)) 
 
   
 
 ## Alternative graph - using facet_wrap to compare lab testing numbers and % positive without plotting on same graph
 # 
-# label_tests_performed<-"Daily tests performed"
-# label_tests_performed_7MA<-"7 day average of tests performed"
-# label_percent_positive_7MA<-"7 day average of percent positivity (%)"
-# 
-# National_Daily_long<-figure %>%
-#   select(Date, Jurisdiction, tests_performed, tests_performed_7ma, daily_percent_positive, percent_positive_7ma) %>%
-#   mutate(percent_positive=daily_percent_positive*100,
-#          percent_positive_7ma=percent_positive_7ma*100) %>%
-#   pivot_longer(cols = c(tests_performed:percent_positive_7ma),
-#                names_to ="metric",
-#                values_to="value") %>%
-#   mutate(time_unit=ifelse(str_detect(metric, "7MA"), "7MA","daily"),
-#          metric=ifelse(str_detect(metric,"tests"),"Tests performed","Percent positivity"))
+label_tests_performed<-"Daily tests performed"
+label_tests_performed_7MA<-"7 day average of tests performed"
+label_percent_positive_7MA<-"7 day average of percent positivity (%)"
+
+National_Daily_long<-National_Daily %>%
+  select(Date, Jurisdiction, tests_performed, tests_performed_7MA, percent_positive, percent_positive_7MA) %>%
+  mutate(percent_positive=percent_positive*100,
+         percent_positive_7MA=percent_positive_7MA*100) %>%
+  pivot_longer(cols = c(tests_performed:percent_positive_7MA),
+               names_to ="metric",
+               values_to="value") %>%
+  mutate(time_unit=ifelse(str_detect(metric, "7MA"), "7MA","daily"),
+         metric=ifelse(str_detect(metric,"tests"),"Tests performed","Percent positivity"))
 
 # ggplot(data=National_Daily_long, aes(x=Date, y=value))+
 #   geom_bar(data=subset(National_Daily_long,metric=="Tests performed"&time_unit=="daily"),stat="identity",fill="lightblue")+

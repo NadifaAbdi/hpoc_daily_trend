@@ -1,13 +1,23 @@
 jurisdiction <- if (Sys.getenv("age_prname") == "Canada") "Canada" else c("British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec")
 
-qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
+# Temporary fix for trend extract import
+# qry_cases_raw <- readRDS("Y:/PHAC/IDPCB/CIRID/VIPS-SAR/EMERGENCY PREPAREDNESS AND RESPONSE HC4/EMERGENCY EVENT/WUHAN UNKNOWN PNEU - 2020/EPI SUMMARY/Trend analysis/_Current/_Source Data/CaseReportForm/trend_extract.rds") %>%
+#   dplyr::mutate(onsetdate = as.Date(onsetdate),
+#                 episodedate=as.Date(episodedate),
+#                 earliestlabcollectiondate = as.Date(earliestlabcollectiondate),
+#                 earliestdate=as.Date(earliestdate)) %>%
+#   select(-age)%>%
+#   dplyr::rename(age=age_years)
 
-# code for when wanting to switch over to Metabase method
+# Using trend extract
+# qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
+
+# Metabaser method
 # note - this requires some setup with the keyring package: 
 # https://www.r-bloggers.com/2019/06/how-to-hide-a-password-in-r-with-the-keyring-package/#:~:text=The%20keyring%20package%20is%20a,plaintext%20in%20an%20R%20script.
 
 # think about how best to include metabase_user automation - probably can take advantage of Sys.getenv("USERNAME") and store a datatable with
-# people's usernames and their metabase usernames to automatically grab metabase_user
+# people's usernames and their metabase usernames to automatically grab the correct metabase_user
 
 # metabase_user<-""
 # metabase_pass<-keyring::key_get("Metabase",metabase_user)
@@ -15,7 +25,6 @@ qry_cases_raw<-PHACTrendR::import_DISCOVER_data()
 # qry_cases_raw<-PHACTrendR::import_DISCOVER_data(method="metabaser",
 #                                                 metabase_user = metabase_user,
 #                                                 metabase_pass = metabase_pass)
-
 
 
 qry_canada <- qry_cases_raw %>%

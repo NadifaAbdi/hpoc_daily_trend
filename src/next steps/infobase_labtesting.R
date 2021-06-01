@@ -1,47 +1,20 @@
-# Infobase lab testing
+# # Infobase lab testing
 
+#this code uses the data sets from the "Daily SALT Code_v2.R" code
 
-library(PHACTrendR)
-library(readr)
-library(dplyr)
-library(stringr)
-library(hms)
-library(zoo)
-library(tidyr)
-library(scales)
-library(googlesheets4)
-
-salt_raw <- PHACTrendR::import_SALT_data()
-
-
-#rename variables 
-SALT <- salt_raw %>%
-  select(Report.Date,Jurisdiction,Tests.Performed,Positive.Test.Results,Percent.Positive.Test.Results, Latest.Update.Date) %>%
-  rename(tests_performed=Tests.Performed,
-         positive_tests=Positive.Test.Results,
-         percent_positive=Percent.Positive.Test.Results) %>%
-  mutate(update_date = as.Date(str_sub(Latest.Update.Date, 1, 10)),
-         Date = as.Date(str_sub(Report.Date, 1, 10)),
-         Time = as_hms(str_sub(Report.Date, 13, 20)),
-         datetime = strptime(paste(Date, Time), "%Y-%m-%d%H:%M:%S"),
-         positive_tests = ifelse (!is.na(positive_tests), positive_tests, round(tests_performed*(percent_positive/100))),  #some PTs (AB, ON) only report % positive
-         percent_positive = ifelse (!is.na(percent_positive), percent_positive, round((positive_tests/tests_performed)*100, digits = 3)))
-
-n_minus_two<-max(SALT$update_date)-2
-
-SALT2 <- SALT %>%
+SALT2_info <- SALT %>%
   filter(Date <= max(update_date)-2) %>% #this gives N-2 data
   select(-Latest.Update.Date,-update_date)%>%
   arrange(Jurisdiction,datetime)
 
-SALT3<-SALT2 %>%
+SALT3_info<-SALT2_info %>%
   mutate(reported="Yes") %>%
   complete(Date, Jurisdiction, fill = list(reported="No"))
 
   
 
 # calculate 7MA for PTs 
-SALT_PT <- SALT3 %>%
+SALT_PT_info <- SALT3_info %>%
   group_by(Jurisdiction) %>%
   mutate(daily_percent_positive = (positive_tests/tests_performed),
          tests_performed_7ma=rollapply(tests_performed,7, mean,na.rm=TRUE,fill=NA,align="right"),
@@ -53,7 +26,7 @@ SALT_PT <- SALT3 %>%
 
 
 # calculate Canadian totals by summing all provinces
-SALT_national <- SALT_PT %>%
+SALT_national_info <- SALT_PT_info %>%
   group_by(Date) %>%
   summarise(tests_performed = sum(tests_performed, na.rm=TRUE),
             positive_tests = sum(positive_tests, na.rm=TRUE)) %>%
@@ -68,13 +41,13 @@ SALT_national <- SALT_PT %>%
   select(Jurisdiction, Date, tests_performed, positive_tests, daily_percent_positive, tests_performed_7ma, percent_positive_7ma, reported)
 
 # combine PT and National data
-SALT_complete <- rbind(SALT_PT,SALT_national) %>%
+SALT_complete_info <- rbind(SALT_PT_info,SALT_national_info) %>%
   ungroup()
 
-correct_national_numbers<-function(input_date){
+correct_national_numbers_info<-function(input_date){
   input_date<-as.Date(input_date)
   
-  SALT_corrections<-SALT_complete %>%
+  SALT_corrections_info<-SALT_complete_info %>%
     filter(!Jurisdiction=="Canada") %>%
     filter(Date<= input_date & Date>= input_date-6) %>%
     group_by(Jurisdiction) %>%
@@ -90,26 +63,26 @@ correct_national_numbers<-function(input_date){
            Date=input_date) %>%
     select(Date, Jurisdiction, weekly_tests_performed_7ma, weekly_percent_positive)
   
-  corrected_7ma<-SALT_corrections$weekly_tests_performed_7ma
-  corrected_perc_pos<-SALT_corrections$weekly_percent_positive
+  corrected_7ma<-SALT_corrections_info$weekly_tests_performed_7ma
+  corrected_perc_pos<-SALT_corrections_info$weekly_percent_positive
   
-  SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==input_date, "tests_performed_7ma"]<-corrected_7ma
-  SALT_complete[SALT_complete$Jurisdiction=="Canada"&SALT_complete$Date==input_date,"percent_positive_7ma"] <- corrected_perc_pos
-  return(SALT_complete)
+  SALT_complete_info[SALT_complete_info$Jurisdiction=="Canada"&SALT_complete_info$Date==input_date, "tests_performed_7ma"]<-corrected_7ma
+  SALT_complete_info[SALT_complete_info$Jurisdiction=="Canada"&SALT_complete_info$Date==input_date,"percent_positive_7ma"] <- corrected_perc_pos
+  return(SALT_complete_info)
 }
 
 n_minus_eight<-n_minus_two-6
 
 
-correction_dates<-seq.Date(from=n_minus_eight,to = n_minus_two,by = 1)
+correction_dates_info<-seq.Date(from=n_minus_eight,to = n_minus_two,by = 1)
 
-for (i in correction_dates){ 
-  SALT_complete<-correct_national_numbers(input_date=i)
+for (i in correction_dates_info){ 
+  SALT_complete_info<-correct_national_numbers_info(input_date=i)
 }
 
 # Final dataset: date, jurisdiction, cumulative tests performed, 7dma tests, 7dma tests/100k, 7dma % positivity
 
-SALT_final<-SALT_complete %>%
+SALT_final_info<-SALT_complete_info %>%
   arrange(Date) %>%
   group_by(Jurisdiction) %>%
   mutate(cumulative_tests=cumsum(tests_performed)) %>%
@@ -130,8 +103,8 @@ SALT_final<-SALT_complete %>%
 
 
 
-#if wanting code to be run interactively, can do the following:
-gs4_auth()
+# #if wanting code to be run interactively, can do the following:
+# gs4_auth()
 
 #if wanting code to be run non-interactively, can do the following (this JSON file must be saved locally in the designated folder)
 # Username<-Sys.getenv("USERNAME")
@@ -141,6 +114,6 @@ gs4_auth()
 spreadsheet_URL<-"https://docs.google.com/spreadsheets/d/1QbFC51QJq8H4s5Q4UOjikEcuGczQXtxfXRrEVpFgiX8"
 sheet_name<-"data_sheet"
 
-write_sheet(data=SALT_final,
+write_sheet(data=SALT_final_info,
             ss = spreadsheet_URL,
             sheet = sheet_name)

@@ -15,7 +15,7 @@ CPHO_table_date_filename<-format(CPHO_table_date, "%Y-%m-%d")
 CPHO_table_date_title<-format(CPHO_table_date, "%B %d, %Y")
 CPHO_table_value_date<-format(CPHO_table_date,"%b %d")
 #created as part of 04 labtesting weekly.R
-lab_dates<-label_this_week
+lab_dates<-this_week_label
 
 
 
@@ -57,9 +57,9 @@ cum_deaths<-Canada_latest_stats %>%
                     "7-day MA deaths",
                     "7 day MA hosp",
                     "7-day MA ICU",
-                    "Test positivity (7MA)",
-                    "Total number of tests performed",
-                    "Tests performed (7MA)")
+                    "Test positivity (last week)",
+                    "Total number of tests performed (last week)",
+                    "Daily average number of tests performed (last week)")
 
 Value<-c(comma(new_cases),
          comma(new_deaths),

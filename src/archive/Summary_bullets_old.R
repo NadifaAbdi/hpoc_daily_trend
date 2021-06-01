@@ -119,7 +119,7 @@ summary_lab_header<-"Laboratory Testing"
 
 summary_lab_bullet_1<-"Note: lab testing numbers may vary slightly day to day as PTs continually update lab testing data"
 
-summary_lab_bullet_2_part_1<-paste0("There was an average of ",key_Can_avg_tests_per_day," tests (7MA) last week (",label_this_week,"), ")
+summary_lab_bullet_2_part_1<-paste0("There was an average of ",key_Can_avg_tests_per_day," daily tests last week (",this_week_label,"), ")
 
 summary_lab_testing_direction=ifelse(str_detect(key_Can_avg_tests_change, "\\+")==TRUE, "increase",
                                       ifelse(str_detect(key_Can_avg_tests_change,"\\-")==TRUE, "decrease", "no change"))
@@ -131,7 +131,7 @@ if (summary_lab_testing_direction=="no change"){
 summary_lab_bullet_2<-paste0(summary_lab_bullet_2_part_1, summary_lab_bullet_2_part_2)
 rm(summary_lab_bullet_2_part_1, summary_lab_bullet_2_part_2, summary_lab_testing_direction)
 
-summary_lab_bullet_3_part_1<-paste0("The national percent positivity (7MA) was ",key_Can_weekly_perc_positive," last week (",label_this_week,"), ")
+summary_lab_bullet_3_part_1<-paste0("The national percent positivity was ",key_Can_weekly_perc_positive," last week (",this_week_label,"), ")
 
 summary_lab_perc_positive_direction=ifelse(str_detect(key_Can_weekly_perc_positive_change, "\\+")==TRUE, "increase",
                                      ifelse(str_detect(key_Can_weekly_perc_positive_change,"\\-")==TRUE, "relative decrease", "no change"))
