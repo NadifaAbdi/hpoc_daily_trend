@@ -1,13 +1,13 @@
 jurisdiction <- if (Sys.getenv("age_prname") == "Canada") "Canada" else c("British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec")
 
 # Temporary fix for trend extract import
-# qry_cases_raw <- readRDS("Y:/PHAC/IDPCB/CIRID/VIPS-SAR/EMERGENCY PREPAREDNESS AND RESPONSE HC4/EMERGENCY EVENT/WUHAN UNKNOWN PNEU - 2020/EPI SUMMARY/Trend analysis/_Current/_Source Data/CaseReportForm/trend_extract.rds") %>%
-#   dplyr::mutate(onsetdate = as.Date(onsetdate),
-#                 episodedate=as.Date(episodedate),
-#                 earliestlabcollectiondate = as.Date(earliestlabcollectiondate),
-#                 earliestdate=as.Date(earliestdate)) %>%
-#   select(-age)%>%
-#   dplyr::rename(age=age_years)
+qry_cases_raw <- readRDS("Y:/PHAC/IDPCB/CIRID/VIPS-SAR/EMERGENCY PREPAREDNESS AND RESPONSE HC4/EMERGENCY EVENT/WUHAN UNKNOWN PNEU - 2020/EPI SUMMARY/Trend analysis/_Current/_Source Data/CaseReportForm/trend_extract.rds") %>%
+  dplyr::mutate(onsetdate = as.Date(onsetdate),
+                episodedate=as.Date(episodedate),
+                earliestlabcollectiondate = as.Date(earliestlabcollectiondate),
+                earliestdate=as.Date(earliestdate)) %>%
+  select(-age)%>%
+  dplyr::rename(age=age_years)
 
 # Using trend extract
 # qry_cases_raw<-PHACTrendR::import_DISCOVER_data()

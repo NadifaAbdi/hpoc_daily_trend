@@ -30,6 +30,7 @@ ggplot(data=figure)+
         panel.border = element_rect(colour = "black", fill=NA),
         panel.grid=element_blank(),
         plot.caption = element_text(hjust = 0,size=20),
+        plot.title=element_text(size=26),
         legend.position = "bottom",
         legend.text = element_text(size=20),
         legend.background = element_rect(color = NA),
