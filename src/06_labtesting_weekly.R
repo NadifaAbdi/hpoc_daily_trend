@@ -1,7 +1,8 @@
 #import incremental SALT data
 salt_raw <- PHACTrendR::import_SALT_data()
 
-#salt_raw <- read.csv("Submitted+Reports.csv")
+#temp fix if shared drive is down!
+# salt_raw <- read.csv("Submitted+Reports.csv")
   
 #rename variables 
 SALT <- salt_raw %>%
