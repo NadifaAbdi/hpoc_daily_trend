@@ -240,7 +240,7 @@ can_last_week_lab_testing<-last_week_canada
 
 
 key_Can_weekly_tests<-scales::comma(can_current_lab_testing$total_tests_performed_this_week)
-key_Can_avg_tests_per_day<-scales::comma(can_current_lab_testing$tests_performed_7ma_this_week)
+key_Can_avg_tests_per_day<-scales::comma(round(can_current_lab_testing$tests_performed_7ma_this_week, digits=1))
 key_Can_weekly_perc_positive<-percent(can_current_lab_testing$percent_positive_7ma_this_week, accuracy = 0.1)
 
 key_Can_avg_tests_change<-PHACTrendR::turn_num_to_percent_change((can_current_lab_testing$tests_performed_7ma_this_week-can_last_week_lab_testing$tests_performed_7ma_last_week)/can_last_week_lab_testing$tests_performed_7ma_last_week)
