@@ -44,17 +44,17 @@ ggplot(data=figure)+
 # label_tests_performed<-"Daily tests performed"
 # label_tests_performed_7MA<-"7 day average of tests performed"
 # label_percent_positive_7MA<-"7 day average of percent positivity (%)"
-# 
+# #
 # National_Daily_long<-figure %>%
 #   select(Date, Jurisdiction, tests_performed, tests_performed_7ma, daily_percent_positive, percent_positive_7ma) %>%
-#   mutate(percent_positive=daily_percent_positive*100,
+#   mutate(daily_percent_positive=daily_percent_positive*100, #renamed percent_positive to daily_percent_positive
 #          percent_positive_7ma=percent_positive_7ma*100) %>%
 #   pivot_longer(cols = c(tests_performed:percent_positive_7ma),
 #                names_to ="metric",
 #                values_to="value") %>%
-#   mutate(time_unit=ifelse(str_detect(metric, "7MA"), "7MA","daily"),
+#   mutate(time_unit=ifelse(str_detect(metric, "7ma"), "7MA","daily"), #changed 7MA to 7ma
 #          metric=ifelse(str_detect(metric,"tests"),"Tests performed","Percent positivity"))
-
+# 
 # ggplot(data=National_Daily_long, aes(x=Date, y=value))+
 #   geom_bar(data=subset(National_Daily_long,metric=="Tests performed"&time_unit=="daily"),stat="identity",fill="lightblue")+
 #   geom_line(data=subset(National_Daily_long,metric=="Tests performed"&time_unit=="7MA"),colour="darkblue",size=1.25)+
@@ -64,10 +64,12 @@ ggplot(data=figure)+
 #              scales = "free_y",
 #              switch = "y")+
 #   scale_x_date(breaks = ("2 months"),
-#                labels = label_date("%b %y"),
+#                labels = label_date("%b/%y"),
 #                expand = c(0, 0))+
 #   scale_y_continuous(name="",labels=scales::label_comma())+
+#   labs(title="Number of Tests Performed and Percent Positivity Across Canada")+
 #   theme(panel.background = element_blank(),
+#         plot.title=element_text(size=26),
 #         panel.border = element_rect(colour = "black", fill=NA),
 #         panel.grid=element_blank(),
 #         plot.caption = element_text(hjust = 0,size=20),
@@ -78,4 +80,4 @@ ggplot(data=figure)+
 #         strip.background = element_blank(),
 #         strip.text=element_text(size=rel(1.8)),
 #         strip.placement = "outside")
-# 
+

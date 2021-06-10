@@ -54,8 +54,9 @@ create_proportion_dataset<-function(type="", include_missing=TRUE, include_older
     data<-qry_cases_raw %>%
       select(phacid, earliestdate, age, agegroup10, agegroup20, as.name(type)) %>%
       filter(agegroup10 != "unknown") %>%
+      mutate(agegroup10 = ifelse(agegroup10 == "80 or plus", "80 plus", agegroup10)) %>%
       filter(if (include_missing==FALSE)  !!as.name(type) %in% c("yes","no") else TRUE) %>% # this line looks to see if `include_missing` is set to TRUE, if it isn't, we exclude missing values 
-      filter(if (include_older==FALSE)  !agegroup10 %in% c("80 or plus","70 to 79", "60 to 69") else TRUE) %>% # this line looks to see if `include_missing` is set to TRUE, if it isn't, we exclude missing values 
+      filter(if (include_older==FALSE)  !agegroup10 %in% c("80 plus","70 to 79", "60 to 69") else TRUE) %>% # this line looks to see if `include_missing` is set to TRUE, if it isn't, we exclude missing values 
       group_by(earliestdate, agegroup10) %>%
       summarise(yes_outcome=sum(!!as.name(type)=="yes", na.rm=TRUE),
                 no_outcome=sum(!!as.name(type) %in% c("no","unknown") | is.na(!!as.name(type))),
@@ -104,7 +105,7 @@ if(type=="hosp"){
     scale_x_date(
       "Date of illness onset",
       breaks = ("month"),
-      labels = label_date("%d%b")) +
+      labels = label_date("%b/%y")) +
     geom_rect(aes(xmin = max(data$earliestdate)-14,
                   xmax = max(data$earliestdate),
                   ymin = -Inf,

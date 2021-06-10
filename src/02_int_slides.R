@@ -13,20 +13,23 @@ int_deaths <- df_int %>%
   select(date, location, population, new_deaths, new_deaths_smoothed, new_deaths_smoothed_per_million) %>%
   filter(new_deaths_smoothed_per_million != is.na(new_deaths_smoothed_per_million)) %>%
   mutate(label = if_else(date == max(date), as.character(location), NA_character_))
+
+
+# countries_of_vacc <- c("AUS","CAN","DNK","FRA","DEU","ITA","ISR","ZAF","GBR","USA") #removed Ireland (IRL) and added Italy (ITA) instead
 # 
 # int_vaccinations<-df_int%>%
-#   filter(iso_code %in% countries_of_interest) %>%
-#   select(date, 
-#          location, 
-#          population, 
-#          total_vaccinations, 
-#          total_vaccinations_per_hundred, 
-#          people_vaccinated, 
-#          people_vaccinated_per_hundred, 
-#          people_fully_vaccinated, 
-#          people_fully_vaccinated_per_hundred, 
+#   filter(iso_code %in% countries_of_vacc) %>%
+#   select(date,
+#          location,
+#          population,
+#          total_vaccinations,
+#          total_vaccinations_per_hundred,
+#          people_vaccinated,
+#          people_vaccinated_per_hundred,
+#          people_fully_vaccinated,
+#          people_fully_vaccinated_per_hundred,
 #          new_vaccinations,
-#          new_vaccinations_smoothed, 
+#          new_vaccinations_smoothed,
 #          new_vaccinations_smoothed_per_million) %>%
 #   mutate(people_vaccinated_percentage=people_vaccinated_per_hundred/100) %>%
 #   filter(!is.na(total_vaccinations))
@@ -107,11 +110,11 @@ ggplot(int_deaths, aes(date, new_deaths_smoothed_per_million, group = location, 
 cat('\n') 
 
 
-# 
+
 # # exploring a possible vaccination chart
 # 
-# cat('\n')  
-# cat("# Vaccination by Country (percent vaccinated, any dose)", "\n") 
+# cat('\n')
+# cat("# Vaccination by Country (percent vaccinated, at least one dose)", "\n")
 # 
 # #Plot vaccinations
 # ggplot(int_vaccinations, aes(date, people_vaccinated_percentage, group = location, colour = location)) +
@@ -122,7 +125,7 @@ cat('\n')
 #   #         nudge_y = 1,
 #   #         na.rm = TRUE
 #   # ) +
-#   scale_y_continuous("Percent vaccinated (at least one dose)",
+#   scale_y_continuous("Percent of population with at least one dose of COVID-19 vaccine",
 #                      label=label_percent()) +
 #   scale_x_date("Date",
 #                breaks = scales::breaks_width("1 month"),
@@ -206,10 +209,8 @@ cat('\n')
 #                         \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 # 
 # cat('\n')
-# 
 
-# 
-# 
+
 
 
 
