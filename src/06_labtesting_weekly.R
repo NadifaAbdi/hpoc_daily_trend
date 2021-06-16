@@ -31,7 +31,7 @@ n_minus_two<-max(SALT$update_date)-2
 
 
 SALT1b <- SALT %>%
-  filter(Date <= max(update_date)-2) %>% #this gives N-2 data
+  #filter(Date <= max(update_date)-2) %>% #this gives N-2 data
   select(-Latest.Update.Date,-update_date, -Time, -Report.Date)%>%
   filter(Date>="2021-01-23") %>% #Issues with historical data missing for some PTs - only taking last two weeks data for now.
   arrange(Jurisdiction,datetime) %>%
@@ -78,6 +78,7 @@ SALT_national <- SALT_PT %>%
 
 # combine PT and National data
 SALT_complete <- rbind(SALT_PT,SALT_national) %>%
+  filter(Date <= n_minus_two) %>% #this gives N-2 data
   ungroup()
 
 
@@ -215,17 +216,51 @@ weeks_combined <- this_week %>%
          !!paste0("Average Tests per 100k, (",label_last_week,")") := tests_7ma_per_100k_last_week)
          
 
-# mutate(percent_positive_7ma_last_week=ifelse(round(percent_positive_7ma_last_week,digits=4) < 0.001, percent(percent_positive_7ma_last_week,accuracy = 0.01), percent(percent_positive_7ma_last_week,accuracy = 0.1)),
-#        percent_positive_7ma_this_week=ifelse(round(percent_positive_7ma_this_week,digits=4) < 0.001, percent(percent_positive_7ma_this_week,accuracy = 0.01), percent(percent_positive_7ma_this_week,accuracy = 0.1)),
-#        change_in_positivity=ifelse(round(change_in_positivity,digits=4) < 0.001, percent(change_in_positivity,accuracy = 0.1), percent(change_in_positivity,accuracy = 0.1)),
-#        change_in_tests=ifelse(round(change_in_tests,digits=4) < 0.001, percent(change_in_tests,accuracy = 0.1), percent(change_in_tests,accuracy = 0.1)),
-#        tests_performed_7ma_this_week = number(tests_performed_7ma_this_week,big.mark = "," ,accuracy = 0.1),
-#        tests_performed_7ma_last_week = number(tests_performed_7ma_last_week,big.mark = "," ,accuracy = 0.1) ) 
-
 
 # data set for the national testing figure
 figure <- SALT_complete %>%
   filter(Jurisdiction=="Canada")
+
+########################################################################################################################################################
+# Numbers for the CPHO table using Sun-Sat week
+########################################################################################################################################################
+
+# combine PT and National data from above but without filtering the dates
+SALT_all_dates <- rbind(SALT_PT,SALT_national) %>%
+  ungroup()
+
+# create weekly variables (Sun - Sat schedule)
+weekly_CPHO <- SALT_all_dates %>%
+  ungroup() %>%
+  mutate(Start_of_week=floor_date(Date, "week"),
+         End_of_week=date(Start_of_week)+6,
+         Week=paste(str_sub(months(Start_of_week),1,3),day(Start_of_week), "-", str_sub(months(End_of_week),1,3),day(End_of_week)) ) %>%
+  filter(Date <= floor_date(max(Date), "week")-1) #gets rid of dates that are after the current week
+
+
+# recalculate the PT numbers for this week in case a PT doesn't report. For example, a PT will have a 5-day MA if it didn't report on days 6 and 7 (and 5 days worth of tests performed)
+weekly_pt_CPHO <- weekly_CPHO %>%
+  mutate(Current_week=ifelse(date(Date)+7 <= max(Date),"No","Yes")) %>%
+  filter(Current_week == "Yes") %>% #keep the dates of the current week only
+  group_by(Jurisdiction) %>%
+  summarise(tests_performed_7ma=mean(tests_performed, na.rm = TRUE),
+            total_tests_performed=sum(tests_performed, na.rm = TRUE),
+            total_positive_tests=sum(positive_tests, na.rm = TRUE) ) %>%
+  mutate(percent_positive_7ma = total_positive_tests/total_tests_performed) %>%
+  filter(Jurisdiction != "Canada")
+
+# now that the PTs for last week have been recalculated, we need to recalculate the numbers for Canada again
+weekly_canada_CPHO <- weekly_pt_CPHO %>% 
+  ungroup() %>%
+  filter(Jurisdiction != "Canada") %>%
+  summarise(tests_performed_7ma=sum(tests_performed_7ma, na.rm = TRUE),
+            total_tests_performed=sum(total_tests_performed, na.rm = TRUE),
+            total_positive_tests=sum(total_positive_tests, na.rm = TRUE) ,
+            Jurisdiction = "Canada") %>%
+  mutate(percent_positive_7ma = total_positive_tests/total_tests_performed) 
+
+# put the national values back into the data set
+weekly_all_CPHO <- bind_rows(weekly_pt_CPHO, weekly_canada_CPHO) 
 
 
 ########################################################################################################################################################  
@@ -295,6 +330,36 @@ if(any_PTs_missing_latest_lab_date_flag==TRUE){
 }
 
 
+########################################################################################################################################################  
+
+#Creating "key_" R variables for inclusion in the CPHO table
+
+key_Can_weekly_tests_CPHO<-scales::comma(weekly_canada_CPHO$total_tests_performed)
+key_Can_avg_tests_per_day_CPHO<-scales::comma(round(weekly_canada_CPHO$tests_performed_7ma, digits=1))
+key_Can_weekly_perc_positive_CPHO<-percent(weekly_canada_CPHO$percent_positive_7ma, accuracy = 0.1)
+
+
+CPHO_week <- weekly_CPHO %>%
+  mutate(Current_week=ifelse(date(Date)+7 <= max(Date),"No","Yes")) %>%
+  filter(Current_week == "Yes") %>%
+  filter(Jurisdiction=="Canada" & Date==max(Date))
+
+CPHO_lab_dates <- CPHO_week$Week
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -341,53 +406,6 @@ if(any_PTs_missing_latest_lab_date_flag==TRUE){
 #   select(Date,Jurisdiction,tests_performed,tests_performed_7MA,percent_positive, percent_positive_7MA)  %>%
 #   filter(Date>"2021-01-23") %>%   # can remove this filter once ready to present historical lab testing data
 #   filter(Date<=max_lab_test_fig_date)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Final dataset: date, jurisdiction, cumulative tests performed, 7dma tests, 7dma tests/100k, 7dma % positivity
-
-# SALT_final<-SALT_complete %>%
-#   arrange(Date) %>%
-#   group_by(Jurisdiction) %>%
-#   mutate(cumulative_tests=cumsum(tests_performed)) %>%
-#   left_join(PHACTrendR::latest_can_pop, by="Jurisdiction") %>%
-#   mutate(tests_performed_7ma_per_100k=round((tests_performed_7ma/Population)*100000,digits = 1),
-#          tests_performed_7ma=round(tests_performed_7ma, digits = 1),
-#          percent_positive_7ma=ifelse(is.na(percent_positive_7ma), 0, round(percent_positive_7ma*100, digits=2))) %>%
-#   select(Date, Jurisdiction, cumulative_tests, tests_performed_7ma, tests_performed_7ma_per_100k, percent_positive_7ma)%>%
-#   rename(`Seven day rolling percent positivity`=percent_positive_7ma,
-#          `Cumulative tests`=cumulative_tests,
-#          `Total tests performed, 7-day moving average`=tests_performed_7ma,
-#          `Total tests performed per 100k population, 7-day moving average`=tests_performed_7ma_per_100k)
-
-
-
-  
-  
-  
- 
 
 
 

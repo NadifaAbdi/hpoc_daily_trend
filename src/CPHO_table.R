@@ -15,7 +15,7 @@ CPHO_table_date_filename<-format(CPHO_table_date, "%Y-%m-%d")
 CPHO_table_date_title<-format(CPHO_table_date, "%B %d, %Y")
 CPHO_table_value_date<-format(CPHO_table_date,"%b %d")
 #created as part of 04 labtesting weekly.R
-lab_dates<-label_this_week
+lab_dates<-CPHO_lab_dates
 
 
 
@@ -70,9 +70,9 @@ Value<-c(comma(new_cases),
          key_national_7MA_deaths,
          comma(key_national_7MA_hosp),
          comma(key_national_7MA_icu),
-         key_Can_weekly_perc_positive,
-         key_Can_weekly_tests,
-         key_Can_avg_tests_per_day)
+         key_Can_weekly_perc_positive_CPHO,
+         key_Can_weekly_tests_CPHO,
+         key_Can_avg_tests_per_day_CPHO)
 
 `Cut-off Date`<-c(rep(CPHO_table_value_date,9),rep(lab_dates,3))
 
