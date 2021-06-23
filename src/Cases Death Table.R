@@ -135,7 +135,7 @@ write_csv(export_trend_cd, ".\\output\\cases_deaths_15days.csv")
 
 key_national_7MA_cases<-comma(Case_Death_Stats$Cases_Daily_7MA[Case_Death_Stats$Jurisdiction=="Canada"])
 key_national_weekly_change_cases<-PHACTrendR::turn_num_to_percent_change(Case_Death_Stats$Weekly_Change_Cases[Case_Death_Stats$Jurisdiction=="Canada"])
-key_national_7MA_deaths<-comma(Case_Death_Stats$Deaths_Daily_7MA[Case_Death_Stats$Jurisdiction=="Canada"],accuracy = 0.1)
+key_national_7MA_deaths<-comma(round(Case_Death_Stats$Deaths_Daily_7MA[Case_Death_Stats$Jurisdiction=="Canada"],digits = 0))
 key_national_weekly_change_deaths<-PHACTrendR::turn_num_to_percent_change(Case_Death_Stats$Weekly_Change_Deaths[Case_Death_Stats$Jurisdiction=="Canada"])
 
 key_sum_PTs_no_increase_cases<-Case_Death_Stats %>%
