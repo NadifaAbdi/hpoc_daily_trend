@@ -49,7 +49,7 @@ plot<-ggplot(qry_cases_per, aes(x = earliestdate, y = sdma_per, colour = agegrou
     guides(colour = guide_legend(override.aes = list(size=3)))+
     labs(caption = paste0(
         "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
     theme(
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),

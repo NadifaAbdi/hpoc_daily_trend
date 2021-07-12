@@ -25,7 +25,7 @@ ggplot(data=df_Canada_100k)+
                       values =c('lightblue'='lightblue','darkblue'='darkblue'), labels = c('Daily cases per 100,000, 7-day moving average','Daily cases per 100,000'))+
   labs(x="",
        y="Cases per 100,000 population",
-       caption=paste0("Spring peak: April 26, 2020: 4.55 cases/100k \nWinter peak: January 10, 2021: 21.74 cases/100k \nToday's value: (",key_100k_fig_date_updated,"): ",key_100k_fig_rate," cases/100,000", "\n Updated daily (Sun-Thurs). Data as of: ",key_100k_fig_date_updated,"."))+
+       caption=paste0("Spring peak: April 26, 2020: 4.55 cases/100k \nWinter peak: January 10, 2021: 21.74 cases/100k \nToday's value: (",key_100k_fig_date_updated,"): ",key_100k_fig_rate," cases/100,000", "\n Updated daily (Mon-Thurs). Data as of: ",key_100k_fig_date_updated,"."))+
   theme(panel.background = element_blank(),
         panel.border = element_rect(colour = "black", fill=NA),
         panel.grid=element_blank(),

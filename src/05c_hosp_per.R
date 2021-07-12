@@ -16,7 +16,7 @@ ggplot(data=hosp_per, aes(x=Date, y=hosp_per, group=Jurisdiction, colour=Jurisdi
   scale_x_date("",date_breaks = ("1 months"),labels = date_format("%b/%y"),expand = c(0,0)) +
   PHACTrendR::scale_colour_trend()+
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
-  labs(Jurisdiction='Jurisdiction', caption = paste0("Updated daily (Sun-Thurs). Data as of: ",format(max(hosp_per$Date), "%B %d"))) +
+  labs(Jurisdiction='Jurisdiction', caption = paste0("Updated daily (Mon-Thurs). Data as of: ",format(max(hosp_per$Date), "%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
