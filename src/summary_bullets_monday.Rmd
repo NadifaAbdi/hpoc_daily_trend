@@ -7,6 +7,7 @@
 * `r summary_cases_bullet_1`
   + `r summary_cases_bullet_1_sub_1`
   + `r summary_cases_bullet_1_sub_2`
+* `r summary_cases_bullet_2`
 
 ## `r summary_severity_header`
 * `r summary_severity_bullet_1`

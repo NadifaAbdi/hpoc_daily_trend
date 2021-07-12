@@ -47,7 +47,7 @@ eval_if_trend<-(params$report=="trend")
 
 day_of_week<-weekdays(Sys.Date())
 
-normal_day<-(day_of_week %in% c("Sunday","Tuesday","Wednesday"))
+normal_day<-(day_of_week %in% c("Tuesday","Wednesday"))
 monday<-(day_of_week=="Monday")
 thursday<-(day_of_week=="Thursday")
 ```
