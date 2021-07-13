@@ -288,7 +288,7 @@ ggplot(Adjusted_national_hosp, aes(x = earliestdate, y = hosp_7ma_per, colour = 
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -335,7 +335,7 @@ ggplot(Adjusted_hosp_big6, aes(x = earliestdate, y = hosp_7ma_per, colour = ageg
   #scale_colour_wsj() +
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -384,7 +384,7 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma, colour = agegro
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+    \nUpdated Daily (Mon-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -432,7 +432,7 @@ ggplot(Adjusted_national_icu, aes(x = earliestdate, y = icu_7ma_per, colour = ag
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -479,7 +479,7 @@ ggplot(Adjusted_icu_big6, aes(x = earliestdate, y = icu_7ma_per, colour = agegro
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
         \nNote that SK data is not displayed due to non-reporting of ICU variable in case report forms. 
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -526,7 +526,7 @@ ggplot(Adjusted_national_deaths, aes(x = earliestdate, y = deaths_7ma, colour = 
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+    \nUpdated Daily (Mon-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -572,7 +572,7 @@ ggplot(Adjusted_national_deaths %>% filter(earliestdate >= "2020-06-01"), aes(x 
   guides(colour = guide_legend(override.aes = list(size=3), nrow=1))+
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-    \nUpdated Daily (Sun-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+    \nUpdated Daily (Mon-Thurs). Data as of: ", format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
@@ -620,7 +620,7 @@ ggplot(Adjusted_deaths_big6, aes(x = earliestdate, y = deaths_7ma_per, colour = 
   guides(colour = guide_legend(override.aes = list(size=3)))+
   labs(caption = paste0(
     "* Shaded area represents approximate lag in reporting
-        \nUpdated Daily (Sun-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
+        \nUpdated Daily (Mon-Thurs). Data as of: ",format(as.Date(max(qry_cases_raw$phacreporteddate, na.rm=TRUE)),"%B %d"))) +
   theme(
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),

@@ -54,7 +54,7 @@ ggplot(pt_hosp_icu_filter %>% filter(Jurisdiction=="Canada"), aes(Date, cases, c
         text = element_text(size = 20),
         plot.caption = element_text(hjust = 0)) +
     labs(caption = paste0("Source: Provincial and territorial website data. \nNote: Hospitalization values are up to ", format(max_hosp_date_all_PTs, "%B %d")," as this is the last date with data from all PTs.",
-                          "\nUpdated daily (Sun-Thurs). Data as of: ",format(max(all_hosp_data$Date), "%B %d")))
+                          "\nUpdated daily (Mon-Thurs). Data as of: ",format(max(all_hosp_data$Date), "%B %d")))
 
 cat('\n') 
 
@@ -98,6 +98,6 @@ ggplot(pt_hosp_icu_filter_big_6, aes(Date, cases, colour = type)) +
     plot.caption = element_text(hjust = 0)
   ) +
   labs(caption = paste0("Source: Provincial and territorial website data. 
-                        \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(all_hosp_data$Date), "%B %d")))
+                        \nUpdated Daily (Mon-Thurs). Data as of: ",format(max(all_hosp_data$Date), "%B %d")))
 
 cat('\n') 

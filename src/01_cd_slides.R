@@ -159,10 +159,10 @@ for (i in list_pt){
                         legend.position = "bottom",
                         text = element_text(size = 20))
         if (i=="Canada"){
-                p2 = p2 + labs(caption = paste0("Spring peak: May 6, 176.6 deaths \nWinter peak: Jan. 26, 161.2 deaths\n","Updated daily (Sun-Thurs). Data as of: ",format(max(df_filter$Date),"%B %d"))) +
+                p2 = p2 + labs(caption = paste0("Spring peak: May 6, 176.6 deaths \nWinter peak: Jan. 26, 161.2 deaths\n","Updated daily (Mon-Thurs). Data as of: ",format(max(df_filter$Date),"%B %d"))) +
                 theme(plot.caption = element_text(hjust = 0))
         } else {
-                p2 = p2 + labs(caption = paste0("Updated daily (Sun-Thurs). Data as of: ",format(max(df_filter$Date),"%B %d"))) +
+                p2 = p2 + labs(caption = paste0("Updated daily (Mon-Thurs). Data as of: ",format(max(df_filter$Date),"%B %d"))) +
                         theme(plot.caption = element_text(hjust = 0))
         }
         # Set the layout of the plots and tables in Patchwork syntax

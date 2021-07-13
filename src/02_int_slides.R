@@ -105,7 +105,7 @@ ggplot(int_deaths, aes(date, new_deaths_smoothed_per_million, group = location, 
     plot.caption = element_text(hjust = 0)
   ) +
   labs(caption = paste0("Source: Our World in Data, https://ourworldindata.org/coronavirus
-                        \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
+                        \nUpdated Daily (Mon-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 
 cat('\n') 
 
@@ -146,7 +146,7 @@ cat('\n')
 #     plot.caption = element_text(hjust = 0)
 #   ) +
 #   labs(caption = paste0("Source: Our World in Data, https://ourworldindata.org/coronavirus
-#                         \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
+#                         \nUpdated Daily (Mon-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 # 
 # cat('\n')
 # 
@@ -206,7 +206,7 @@ cat('\n')
 #     strip.text=element_text(size=rel(1)),
 #     strip.placement = "outside") +
 #   labs(caption = paste0("Source: Our World in Data, https://ourworldindata.org/coronavirus
-#                         \nUpdated Daily (Sun-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
+#                         \nUpdated Daily (Mon-Thurs). Data as of: ",format(max(int_deaths$date), "%B %d")," (International data is lagged by one day)"))
 # 
 # cat('\n')
 

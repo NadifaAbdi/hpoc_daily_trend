@@ -56,7 +56,7 @@ ggplot(data=df_Canada_100k)+
 #                       values =c('lightblue'='lightblue','darkblue'='darkblue'), labels = c('Daily cases per 100 000, 7-day moving average','Daily cases per 100 000'))+
 #   labs(x="",
 #        y="Cases per 100 000 population",
-#        caption=paste0("Updated daily (Sun-Thurs). Data as of: ",key_100k_fig_date_updated,". Today's value: (",key_100k_fig_date_updated,"): ",key_100k_fig_rate," cases/100 000"))+
+#        caption=paste0("Updated daily (Mon-Thurs). Data as of: ",key_100k_fig_date_updated,". Today's value: (",key_100k_fig_date_updated,"): ",key_100k_fig_rate," cases/100 000"))+
 #   theme(panel.background = element_blank(),
 #         panel.border = element_rect(colour = "black", fill=NA),
 #         panel.grid=element_blank(),

@@ -326,7 +326,7 @@ if (any_PTs_missing_latest_lab_date_flag==TRUE){
 if(any_PTs_missing_latest_lab_date_flag==TRUE){
   key_lab_figure_footnote<-paste0("Note: recent lab testing values may be underestimated as the following PTs are not caught up on lab reporting: ",key_PTs_missing_latest_lab_date, ". ","\nUpdated daily (Mon-Thurs). Data as of ",key_lab_update,".")
 } else {
-  key_lab_figure_footnote<-paste0("Updated daily (Sun-Thurs). Data as of ",key_lab_update,". ")
+  key_lab_figure_footnote<-paste0("Updated daily (Mon-Thurs). Data as of ",key_lab_update,". ")
 }
 
 
